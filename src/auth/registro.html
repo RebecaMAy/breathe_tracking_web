@@ -6,7 +6,9 @@
     <title>Breathe Tracking - Registro</title>
     
     <link rel="stylesheet" href="../css/global.css?v=2">
-    <link rel="stylesheet" href="../css/auth.css?v=3"> </head>
+    <link rel="stylesheet" href="../css/auth.css?v=3">
+    <script src="../js/auth.js" defer></script>
+ </head>
 <body class="registration-page"> <header class="main-header">
         <div class="logo">
             <img src="../images/logo-breathe-tracking.png" alt="Breathe Tracking Logo">
@@ -27,7 +29,7 @@
             <div class="login-box-wrapper">
                 <div class="login-box">
                     <p class="login-intro">Introduce tus credenciales para crear tu perfil</p>
-                    <form>
+                    <form id="registerForm">
                         <div class="input-group">
                             <label for="nombre">Nombre Completo</label>
                             <input type="text" id="nombre" placeholder="Introduce tu nombre">
@@ -68,6 +70,5 @@
 
     </div>
     
-    <script src="../js/auth.js"></script>
 </body>
 </html>
