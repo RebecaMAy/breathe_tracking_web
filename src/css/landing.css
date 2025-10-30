@@ -135,41 +135,60 @@
 }
 
 @media (max-width: 1200px) {
+    /* 1. LAYOUT PRINCIPAL: Usamos Flexbox para toda la página */
+    body, .landing-content {
+        display: flex;
+        flex-direction: column; /* Apila header, texto e imagen */
+        min-height: 100vh; /* Ocupa toda la altura del viewport */
+        width: 100%;
+    }
+    
     .landing-content {
-        flex-direction: column;
-        text-align: center;
-        padding: 40px 30px 40px;
+        /* Permite que el contenido principal ocupe todo el espacio restante bajo el header */
+        flex-grow: 1; 
+        padding: 40px 30px 0; /* Eliminamos el padding inferior para anclar la imagen */
         height: auto;
-        min-height: auto;
         align-items: center;
     }
+    
+    /* 2. SECCIÓN DE TEXTO: Debe crecer para empujar todo lo demás al fondo */
     .landing-text-section {
+        flex-grow: 1; /* Esto es CLAVE: el texto empuja la imagen hacia abajo */
         align-items: center;
         max-width: 100%;
-        margin-bottom: 40px;
+        margin-bottom: 20px; /* Reducimos el margen para acercar la imagen */
     }
+    
     .landing-text-section h1 {
         font-size: 3.5em;
     }
+    
+    /* 3. SECCIÓN DE IMÁGENES: Se ancla a la parte inferior del contenedor */
     .landing-image-section {
+        /* Los estilos position: absolute son ineficientes aquí, usamos flex para centrar */
+        position: relative; /* Mantener para los hijos absolutos si se usan */
         width: 100%;
         max-width: 700px;
-        height: 550px;
-        margin-top: 40px;
+        height: 450px; /* Reducimos la altura para forzar que quepa en la pantalla */
+        margin-top: auto; /* Esto empuja la sección al final */
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-end; /* Alinea los hijos (el móvil) al fondo de esta sección */
+        padding-bottom: 0;
     }
+    
+    /* 4. REPOSICIONAMIENTO DE LA IMAGEN MÓVIL DENTRO DE SU CONTENEDOR */
     .landing-mobile-app {
-        position: relative;
+        position: static; /* Cambiamos a static/relative para que la imagen sea responsiva */
         width: 250px;
-        bottom: auto;
-        left: auto;
+        /* Ajustes de posición previos eliminados para centrado simple */
         transform: none;
-        z-index: 2;
+        bottom: 0; /* Aseguramos que el pie de la imagen esté en el pie del contenedor */
     }
+    
+    /* Ocultar elementos secundarios */
     .landing-spain-map {
-        display: none; /* en móvil lo ocultamos */
+        display: none; 
     }
     .landing-bottom-logo {
         display: none;
