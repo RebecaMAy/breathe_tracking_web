@@ -1,10 +1,8 @@
 // js/auth.js
 
 // 1)  AQUÍ CAMBIAR A LA URL DE LA API (Render)
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://api-a044.onrender.com";
 // ej. cuando ella lo suba: 
-
-// const API_BASE = "https://breathe-tracking-api.onrender.com";
 
 document.addEventListener('DOMContentLoaded', function() {
     // ======================================================
