@@ -1,0 +1,116 @@
+/* css/global.css */
+
+/* --- IMPORTACIONES DE FUENTES --- */
+/* Las importamos aquí en lugar de en el HTML */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Gothic&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+/* --- VARIABLES GLOBALES --- */
+:root {
+    /* Colores */
+    --primary-dark-blue: #1A2E44;
+    --primary-dark-text: #222222;
+    --text-light: #FFFFFF;
+    --left-panel-bg: #FFFFFF;
+    --input-bg: #FFFFFF;
+    --border-color: #DDE1E6;
+    --login-bg: rgba(255, 255, 255, 0.92);
+
+    /* Tipografías */
+    --font-primary: 'Poppins', sans-serif;
+    --font-headings: 'League Gothic', sans-serif;
+}
+
+/* --- RESETEO BÁSICO --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.6;
+    color: var(--primary-dark-text);
+    background-color: var(--left-panel-bg);
+    
+    /* Esto ayuda a que el layout ocupe toda la altura */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- COMPONENTES GLOBALES (Ej. Header) --- */
+.main-header {
+    width: 100%;
+    background-color: var(--primary-dark-blue);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    height: 90px;
+    flex-shrink: 0;
+    z-index: 100;
+    justify-content: space-between; /* Para que el logo esté a la izquierda y el botón a la derecha */
+}
+
+.main-header .logo img {
+    height: 70px;
+    width: auto;
+}
+
+/* Botón normal (como el de Home Page en login.html) */
+.header-nav .nav-button {
+    color: var(--text-light);
+    text-decoration: none;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    font-size: 1em;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--primary-dark-blue);
+    transition: background-color 0.3s ease;
+}
+
+.header-nav .nav-button:hover {
+    background-color: #0F1F31;
+    color: var(--text-light);
+}
+
+/* === NUEVO: Botón Ghost (Fantasma) para la Landing Page === */
+.header-nav .nav-button-ghost {
+    background-color: transparent; /* Fondo transparente */
+    border: 2px solid var(--text-light); /* Borde blanco */
+    color: var(--text-light); /* Texto blanco */
+    padding: 10px 20px; /* Aseguramos el padding */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+.header-nav .nav-button-ghost:hover {
+    background-color: var(--text-light); /* Fondo blanco al pasar el ratón */
+    color: var(--primary-dark-blue); /* Texto azul oscuro */
+}
+
+/* === NUEVO: Botón Invertido para la Landing Page === */
+.header-nav .nav-button-inverted {
+    background-color: transparent; /* Fondo transparente */
+    border: 2px solid var(--text-light); /* Borde blanco */
+    color: var(--text-light); /* Texto blanco */
+}
+
+.header-nav .nav-button-inverted:hover {
+    background-color: var(--text-light); /* Fondo blanco al pasar el ratón */
+    color: var(--primary-dark-blue); /* Texto azul oscuro */
+}
+
+/* --- Media Queries Globales (para el header) --- */
+@media (max-width: 576px) {
+    .main-header {
+        padding: 0 20px;
+        height: 70px;
+    }
+    .main-header .logo img {
+        height: 55px;
+    }
+}

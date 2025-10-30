@@ -1,0 +1,214 @@
+/* css/auth.css */
+/* Estilos específicos para las páginas de login y registro */
+
+/* Aumentar el tamaño del móvil en la página de registro */
+.registration-page .left-panel .app-screenshot {
+    max-width: 650px; /* Aumenta el tamaño máximo, por ejemplo, a 550px */
+}
+
+.auth-container {
+    display: flex;
+    /* Ocupa el espacio restante (100% altura - header) */
+    flex-grow: 1; 
+    min-height: calc(100vh - 90px); /* Altura mínima */
+}
+
+/* --- Panel Izquierdo --- */
+.left-panel {
+    width: 50%;
+    background-color: var(--left-panel-bg);
+    min-height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 40px 40px 0 40px; 
+}
+
+.left-panel h1 {
+    width: 100%;
+    max-width: 550px;
+    font-family: var(--font-headings); /* Usando variable global */
+    font-size: 3.5em;
+    line-height: 1.1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--primary-dark-text);
+    font-weight: 400;
+    text-align: center;
+}
+
+.app-screenshot {
+    width: 100%; 
+    max-width: 480px;
+    height: auto; 
+    display: block;
+    align-self: center;
+}
+
+
+/* --- Panel Derecho (Login) --- */
+.right-panel {
+    width: 50%;
+    /* RUTA CORREGIDA: ../images/ */
+    background-image: url('../images/background-city.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px;
+}
+
+.right-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.45); /* Overlay oscuro */
+    z-index: 1;
+}
+
+.login-box-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 430px;
+    padding: 40px;
+    background-color: var(--login-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.login-intro {
+    font-size: 1.1em;
+    color: var(--primary-dark-text);
+    font-family: var(--font-primary); /* Usando variable global */
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--primary-dark-text);
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: var(--font-primary);
+    background-color: var(--input-bg);
+    color: var(--primary-dark-text);
+}
+
+.input-group input::placeholder {
+    color: #999;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    font-size: 1.1em;
+}
+
+.toggle-password .fa-eye-slash {
+    display: none;
+}
+
+.register-text {
+    font-size: 0.95em;
+    color: var(--primary-dark-text);
+    margin-top: -10px;
+    margin-bottom: 25px;
+}
+
+.register-text a {
+    color: var(--primary-dark-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-text a:hover {
+    text-decoration: underline;
+}
+
+.btn-entrar {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary-dark-blue);
+    color: var(--text-light);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.btn-entrar:hover {
+    background-color: #0F1F31;
+}
+
+/* --- Media Queries para Layout de Autenticación --- */
+@media (max-width: 992px) {
+    .auth-container {
+        display: block; 
+    }
+
+    .left-panel {
+        display: none; 
+    }
+
+    .right-panel {
+        width: 100%;
+        min-height: calc(100vh - 90px); /* Ajuste a la altura del header */
+        padding: 40px 20px;
+    }
+
+    .login-box-wrapper {
+        width: 90%;
+        margin: 0 auto; 
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Ajuste de altura por el header móvil (70px) */
+    .auth-container, .left-panel, .right-panel {
+        min-height: calc(100vh - 70px);
+    }
+
+    .right-panel {
+        padding: 30px 15px;
+    }
+
+    .login-box-wrapper {
+        padding: 30px;
+    }
+}
