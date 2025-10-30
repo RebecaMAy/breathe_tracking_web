@@ -6,33 +6,30 @@ from flask_restful import Resource, reqparse, abort
 from psycopg2 import OperationalError, Error as Psycopg2Error
 from db import get_db_connection
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import cross_origin
 
 ROLES = { "Administrador" : 1 , "Suscriptor" : 2 }
 
-parser_post_registro = reqparse.RequestParser()
-parser_post_registro.add_argument('correo', type=str, required=True, help="El campo 'correo' es requerido para completar el registro")
-parser_post_registro.add_argument('nombre', type=str, required=True, help="El campo 'nombre' es requerido para completar el registro")
-parser_post_registro.add_argument('codigo_postal', type=int, required=False) 
-parser_post_registro.add_argument('pass', type=str, required=True, help="El campo 'pass' es requerido para completar el registro")
-
 class Registro(Resource):
-
     def post(self):
         """Registra un nuevo usuario en la base de datos."""
-        payload = parser_post_registro.parse_args()
+        payload = request.get_json()
 
-        correo = payload['correo']
-        nombre = payload['nombre']
-        password_plano = payload['pass']
+        if not payload:
+            return {"ok": False, "error": "No se proporcionaron datos JSON."}, 400
+
+        correo = payload.get('email')
+        nombre = payload.get('nombre')
+        password_plano = payload.get('password')
         id_rol_defecto = ROLES["Suscriptor"] 
 
         # --- Punto de seguridad crítico ---
         password_hash = generate_password_hash(password_plano)
 
         query = """
-            INSERT INTO usuarios (Id_Rol, nombre, email, password_hash)
+            INSERT INTO "usuarios" ("Id_Rol", "nombre", "email", "password_hash")
             VALUES (%s, %s, %s, %s)
-            RETURNING id_usuario;
+            RETURNING "id_usuario";
         """
         
         conn = None
@@ -62,7 +59,7 @@ class Registro(Resource):
         
 class Login(Resource):
 
-    def get(self):
+    def post(self):
         """Devuelve código de éxito o error, y si el usuario existe devuelve su rol"""
 
         data = request.get_json()
@@ -73,14 +70,14 @@ class Login(Resource):
         contraseña = data.get('password')
 
         if not correo:
-            return {"ok": False, "error": "Falta 'email' en el cuerpo JSON."}, 40
+            return {"ok": False, "error": "Falta 'email' en el cuerpo JSON."}, 400
         if not contraseña:
             return {"ok": False, "error": "Faltan 'password' en el cuerpo JSON."}, 400
 
-        query = """ SELECT u.password_hash, r.nombre AS rol_nombre
-            FROM  usuarios u
-            JOIN  roles r ON u.Id_Rol = r.id_rol
-            WHERE u.email = %s;
+        query = """ SELECT u."password_hash", r.nombre AS rol_nombre
+            FROM  "usuarios" u
+            JOIN  roles r ON u."Id_Rol" = r.id_rol
+            WHERE u."email" = %s;
         """
 
         conn = None 
