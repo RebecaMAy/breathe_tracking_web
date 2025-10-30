@@ -3,121 +3,134 @@
 /* --- Contenedor principal de la landing --- */
 .landing-content {
     display: flex;
-    justify-content: space-between; /* Distribuye el espacio entre las secciones */
-    align-items: center;
-    padding: 80px 100px; /* Aumentar el padding general */
-    background-color: var(--left-panel-bg); /* Fondo blanco */
-    flex-grow: 1; /* Para que ocupe todo el espacio disponible */
-    overflow: hidden; /* Importante para que las imágenes salgan un poco de los bordes sin scroll */
-    position: relative; /* Clave para que los elementos internos puedan ser absolutos respecto a él */
-    min-height: calc(100vh - 90px); /* Aseguramos que ocupe todo el espacio vertical */
+    justify-content: space-between;
+    align-items: flex-start;         /* texto arriba */
+    padding: 35px 100px 0;
+    background-color: #ffffff;       /* blanco puro */
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+    min-height: calc(100vh - 120px); /* un poco menos alta */
 }
 
 /* --- Sección de Texto (Izquierda) --- */
 .landing-text-section {
-    flex: 0 0 45%; /* Ocupa el 45% del ancho */
-    max-width: 600px; 
+    flex: 0 0 45%;
+    max-width: 600px;
     text-align: left;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Alinear elementos a la izquierda */
-    justify-content: center;
-    z-index: 3; /* Asegura que el texto esté por encima de las imágenes */
-    padding-bottom: 50px; /* Añade espacio inferior para que el texto no esté muy pegado a la imagen inferior en móvil */
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.8rem;
+    z-index: 5;                      /* siempre por encima de las imágenes */
+    margin-top: 5px;
 }
 
 .landing-text-section h1 {
     font-family: var(--font-headings);
-    font-size: 4.2em; /* MÁS GRANDE */
-    line-height: 1; /* Más apretado */
+    font-size: 4.1em;
+    line-height: 1;
     letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--primary-dark-text);
     font-weight: 400;
-    margin-bottom: 20px; /* Más margen */
+    margin-bottom: 12px;
 }
 
 .landing-text-section .subtitle {
-    font-size: 1.4em; /* MÁS GRANDE */
+    font-size: 1.35em;
     color: var(--primary-dark-text);
-    margin-bottom: 40px; /* Más margen */
-    line-height: 1.3; /* Más junto */
+    margin-bottom: 25px;
+    line-height: 1.3;
 }
 
 .landing-text-section .btn-primary {
     display: inline-block;
-    padding: 18px 40px; 
-    background-color: #4A90E2; /* Azul del botón Suscríbete */
-    color: var(--text-light);
+    padding: 18px 40px;
+    background-color: #4A90E2;
+    color: #fff;
     text-decoration: none;
     border-radius: 8px;
-    font-size: 1.2em; 
+    font-size: 1.2em;
     font-weight: 500;
     transition: background-color 0.3s ease;
-    margin-bottom: 10px; /* Menos espacio */
+    margin-bottom: 8px;
 }
 
 .landing-text-section .btn-primary:hover {
-    background-color: #357ABD; 
+    background-color: #357ABD;
 }
 
 .landing-text-section .info-text {
-    font-size: 1.1em;
+    font-size: 1.05em;
     color: #666;
     line-height: 1.4;
 }
 
 /* --- Sección de Imágenes (Derecha) --- */
 .landing-image-section {
-    flex: 0 0 55%; /* Ocupa el 55% del ancho */
-    display: block; /* Bloque para posicionar elementos internos de forma absoluta */
+    flex: 0 0 55%;
     position: relative;
-    height: calc(100vh - 90px - 80px); /* Ocupa casi todo el alto restante */
-    padding-bottom: 0; 
+    height: calc(100vh - 120px);
+    min-height: 520px;
+    padding-bottom: 0;
 }
 
+/* 📱 MÓVIL: más a la izquierda */
 .landing-mobile-app {
-    /* === POSICIONAMIENTO DEL MÓVIL === */
-    width: 380px; /* MÁS GRANDE */
-    height: auto;
     position: absolute;
-    bottom: -60px; /* Pegado al borde inferior del viewport (-60px para compensar el padding del padre) */
-    left: 20%; /* Centrado en el tercio izquierdo del contenedor de imágenes */
-    transform: rotate(-20deg); /* MÁS ROTADO para mayor profundidad */
-    z-index: 2; /* Por encima del mapa */
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4)); /* Sombra para profundidad */
+    bottom: -35px;          /* un poco por debajo para que “apoye” */
+    left: -12%;             /* 👈 lo metemos hacia el centro */
+    width: 270px;
+    height: auto;
+    transform: none;
+    z-index: 3;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.25));
 }
 
+/* 🗺️ MAPA */
 .landing-spain-map {
-    /* === POSICIONAMIENTO DEL MAPA === */
-    width: 850px; /* MÁS GRANDE */
+    width: 610px;
     height: auto;
     position: absolute;
-    top: 50%; 
-    right: -100px; /* Pegado y salido un poco por la derecha */
-    transform: translateY(-50%); /* Centrado verticalmente */
+    top: -35px;
+    right: -50px;
+    transform: none;
     z-index: 1;
-    opacity: 1; /* Opacidad completa */
+    opacity: 1;
 }
 
+/* LOGO INFERIOR */
 .landing-bottom-logo {
-    /* === POSICIONAMIENTO DEL LOGO INFERIOR === */
-    width: 250px; 
+    width: 230px;
     height: auto;
     position: absolute;
-    right: 40px; /* Mover más a la izquierda desde el borde derecho */
-    bottom: 40px; /* Mover más arriba desde el borde inferior */
-    z-index: 3; 
-    opacity: 1; /* Totalmente visible */
+    right: 40px;
+    bottom: 20px;           /* con margen, no pegado del todo */
+    z-index: 3;
+    opacity: 1;
 }
 
-/* --- Media Queries para la Landing Page --- */
+/* --- Media Queries --- */
+
+@media (max-width: 1350px) {
+    /* en pantallas algo más pequeñas recolocamos el móvil
+       para que no muerda el texto */
+    .landing-mobile-app {
+        left: -3%;
+        bottom: -30px;
+    }
+}
+
 @media (max-width: 1400px) {
     .landing-content {
-        padding: 60px 50px;
+        padding: 30px 50px 0;
     }
     .landing-spain-map {
-        width: 750px;
+        width: 560px;
+        right: -40px;
+        top: -25px;
     }
 }
 
@@ -125,16 +138,15 @@
     .landing-content {
         flex-direction: column;
         text-align: center;
-        padding: 40px 30px;
+        padding: 40px 30px 40px;
         height: auto;
-        min-height: auto; 
+        min-height: auto;
+        align-items: center;
     }
     .landing-text-section {
-        align-items: center; 
+        align-items: center;
         max-width: 100%;
         margin-bottom: 40px;
-        flex: auto;
-        padding-bottom: 0;
     }
     .landing-text-section h1 {
         font-size: 3.5em;
@@ -142,26 +154,25 @@
     .landing-image-section {
         width: 100%;
         max-width: 700px;
-        height: 550px; 
+        height: 550px;
         margin-top: 40px;
-        
-        /* Centramos el contenedor de imágenes en el centro */
+        display: flex;
         justify-content: center;
         align-items: center;
-        display: flex; /* Temporalmente para centrar */
     }
     .landing-mobile-app {
-        position: relative; /* Quitamos absoluto en móvil */
+        position: relative;
         width: 250px;
         bottom: auto;
         left: auto;
-        transform: rotate(0deg); /* Quitamos rotación en móvil */
+        transform: none;
+        z-index: 2;
     }
     .landing-spain-map {
-        display: none; /* Ocultamos el mapa en móvil para simplificar */
+        display: none; /* en móvil lo ocultamos */
     }
     .landing-bottom-logo {
-        display: none; /* Ocultamos el logo inferior en móvil */
+        display: none;
     }
 }
 
@@ -171,5 +182,8 @@
     }
     .landing-mobile-app {
         width: 200px;
+    }
+    .landing-text-section h1 {
+        font-size: 2.8em;
     }
 }

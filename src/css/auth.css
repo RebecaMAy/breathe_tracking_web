@@ -1,16 +1,15 @@
 /* css/auth.css */
 /* Estilos específicos para las páginas de login y registro */
 
-/* Aumentar el tamaño del móvil en la página de registro */
+/*  móvil en la página de registro  */
 .registration-page .left-panel .app-screenshot {
-    max-width: 650px; /* Aumenta el tamaño máximo, por ejemplo, a 550px */
+    max-width: 340px;
 }
 
 .auth-container {
     display: flex;
-    /* Ocupa el espacio restante (100% altura - header) */
     flex-grow: 1; 
-    min-height: calc(100vh - 90px); /* Altura mínima */
+    min-height: calc(100vh - 90px);
 }
 
 /* --- Panel Izquierdo --- */
@@ -28,7 +27,7 @@
 .left-panel h1 {
     width: 100%;
     max-width: 550px;
-    font-family: var(--font-headings); /* Usando variable global */
+    font-family: var(--font-headings);
     font-size: 3.5em;
     line-height: 1.1;
     letter-spacing: 1px;
@@ -38,10 +37,11 @@
     text-align: center;
 }
 
+/*  móvil por defecto (login) */
 .app-screenshot {
-    width: 100%; 
-    max-width: 480px;
-    height: auto; 
+    width: 100%;
+    max-width: 300px;   /*  antes 480px */
+    height: auto;
     display: block;
     align-self: center;
 }
@@ -50,7 +50,6 @@
 /* --- Panel Derecho (Login) --- */
 .right-panel {
     width: 50%;
-    /* RUTA CORREGIDA: ../images/ */
     background-image: url('../images/background-city.png');
     background-size: cover;
     background-position: center;
@@ -64,11 +63,8 @@
 .right-panel::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.45); /* Overlay oscuro */
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
     z-index: 1;
 }
 
@@ -87,7 +83,7 @@
 .login-intro {
     font-size: 1.1em;
     color: var(--primary-dark-text);
-    font-family: var(--font-primary); /* Usando variable global */
+    font-family: var(--font-primary);
     margin-bottom: 30px;
     font-weight: 500;
 }
@@ -187,20 +183,21 @@
 
     .right-panel {
         width: 100%;
-        min-height: calc(100vh - 90px); /* Ajuste a la altura del header */
+        min-height: calc(100vh - 90px);
         padding: 40px 20px;
     }
 
     .login-box-wrapper {
         width: 90%;
-        margin: 0 auto; 
+        margin: 0 auto;
         max-width: 400px;
     }
 }
 
 @media (max-width: 576px) {
-    /* Ajuste de altura por el header móvil (70px) */
-    .auth-container, .left-panel, .right-panel {
+    .auth-container,
+    .left-panel,
+    .right-panel {
         min-height: calc(100vh - 70px);
     }
 

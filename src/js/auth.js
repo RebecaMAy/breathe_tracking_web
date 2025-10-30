@@ -189,4 +189,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ===== Click en el logo → ir al landing =====
+    const headerLogo = document.querySelector('.main-header .logo, .logo img, .logo');
+    if (headerLogo) {
+        headerLogo.style.cursor = 'pointer';
+        headerLogo.addEventListener('click', () => {
+            // si tu landing es index.html en la raíz:
+            window.location.href = '../index.html';  // <- usa './index.html' si estás en la raíz
+        });
+    }
+
+
 });
+
+
