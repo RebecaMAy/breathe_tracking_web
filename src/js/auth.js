@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 const res = await fetch(`${API_BASE}/login`, {
-                    method: "POST",
+                    method: "GET",
                     headers: {
                         "Content-Type": "application/json"
                     },
