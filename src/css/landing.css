@@ -1,46 +1,61 @@
-/* css/landing.css */
+/* css/landing.css (Versión Rediseñada) */
 
 /* --- Contenedor principal de la landing --- */
 .landing-content {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;         /* texto arriba */
-    padding: 35px 100px 0;
-    background-color: #ffffff;       /* blanco puro */
+    padding: 6vh 8%;
     flex-grow: 1;
-    overflow: hidden;
     position: relative;
-    min-height: calc(100vh - 120px); /* un poco menos alta */
+
+    /* --- NUEVA IMAGEN DE FONDO (tema: aire / ciudad) --- */
+    background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
-/* --- Sección de Texto (Izquierda) --- */
+/* --- Overlay --- */
+.landing-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(75deg, rgba(26, 46, 68, 0.55) 0%, rgba(26, 46, 68, 0.35) 100%);
+    z-index: 1;
+}
+
+/* Texto izquierda */
 .landing-text-section {
-    flex: 0 0 45%;
-    max-width: 600px;
+    flex: 0 1 500px;
+    max-width: 550px;
     text-align: left;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.8rem;
-    z-index: 5;                      /* siempre por encima de las imágenes */
-    margin-top: 5px;
+    gap: 1rem;
+    z-index: 2;
+    animation: fadeInText 1s ease-out forwards;
 }
 
 .landing-text-section h1 {
     font-family: var(--font-headings);
-    font-size: 4.1em;
-    line-height: 1;
-    letter-spacing: 1px;
+    font-size: 4.3em;
+    line-height: 1.05;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--primary-dark-text);
+    color: #ffffff;
     font-weight: 400;
     margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .landing-text-section .subtitle {
-    font-size: 1.35em;
-    color: var(--primary-dark-text);
+    font-size: 1.4em;
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 25px;
     line-height: 1.3;
 }
@@ -48,160 +63,88 @@
 .landing-text-section .btn-primary {
     display: inline-block;
     padding: 18px 40px;
-    background-color: #4A90E2;
+    background-color: #5BA3F5;
     color: #fff;
     text-decoration: none;
     border-radius: 8px;
     font-size: 1.2em;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
+    font-weight: 600;
+    transition: all 0.3s ease;
     margin-bottom: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .landing-text-section .btn-primary:hover {
-    background-color: #357ABD;
+    background-color: #4A90E2;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(91, 163, 245, 0.4);
 }
 
 .landing-text-section .info-text {
-    font-size: 1.05em;
-    color: #666;
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.75);
     line-height: 1.4;
 }
 
-/* --- Sección de Imágenes (Derecha) --- */
+/* Imagen derecha */
 .landing-image-section {
-    flex: 0 0 55%;
-    position: relative;
-    height: calc(100vh - 120px);
-    min-height: 520px;
-    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    animation: slideInImage 1s ease-out forwards;
 }
 
-/* 📱 MÓVIL: más a la izquierda */
 .landing-mobile-app {
-    position: absolute;
-    bottom: -35px;          /* un poco por debajo para que “apoye” */
-    left: -12%;             /* 👈 lo metemos hacia el centro */
-    width: 270px;
+    width: 100%;
+    max-width: 340px;
     height: auto;
-    transform: none;
-    z-index: 3;
     filter: drop-shadow(0 15px 30px rgba(0,0,0,0.25));
+    position: relative;
 }
 
-/* 🗺️ MAPA */
-.landing-spain-map {
-    width: 610px;
-    height: auto;
-    position: absolute;
-    top: -35px;
-    right: -50px;
-    transform: none;
-    z-index: 1;
-    opacity: 1;
+/* Animaciones */
+@keyframes fadeInText {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* LOGO INFERIOR */
-.landing-bottom-logo {
-    width: 230px;
-    height: auto;
-    position: absolute;
-    right: 40px;
-    bottom: 20px;           /* con margen, no pegado del todo */
-    z-index: 3;
-    opacity: 1;
+@keyframes slideInImage {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
-/* --- Media Queries --- */
-
-@media (max-width: 1350px) {
-    /* en pantallas algo más pequeñas recolocamos el móvil
-       para que no muerda el texto */
-    .landing-mobile-app {
-        left: -3%;
-        bottom: -30px;
-    }
-}
-
-@media (max-width: 1400px) {
+/* Responsive */
+@media (max-width: 992px) {
     .landing-content {
-        padding: 30px 50px 0;
+        flex-direction: column;
+        text-align: center;
+        padding: 6vh 5%;
+        background-attachment: scroll;
     }
-    .landing-spain-map {
-        width: 560px;
-        right: -40px;
-        top: -25px;
-    }
-}
 
-@media (max-width: 1200px) {
-    /* 1. LAYOUT PRINCIPAL: Usamos Flexbox para toda la página */
-    body, .landing-content {
-        display: flex;
-        flex-direction: column; /* Apila header, texto e imagen */
-        min-height: 100vh; /* Ocupa toda la altura del viewport */
-        width: 100%;
-    }
-    
-    .landing-content {
-        /* Permite que el contenido principal ocupe todo el espacio restante bajo el header */
-        flex-grow: 1; 
-        padding: 40px 30px 0; /* Eliminamos el padding inferior para anclar la imagen */
-        height: auto;
-        align-items: center;
-    }
-    
-    /* 2. SECCIÓN DE TEXTO: Debe crecer para empujar todo lo demás al fondo */
     .landing-text-section {
-        flex-grow: 1; /* Esto es CLAVE: el texto empuja la imagen hacia abajo */
         align-items: center;
+        text-align: center;
         max-width: 100%;
-        margin-bottom: 20px; /* Reducimos el margen para acercar la imagen */
     }
-    
+
     .landing-text-section h1 {
-        font-size: 3.5em;
+        font-size: 3.2em;
     }
-    
-    /* 3. SECCIÓN DE IMÁGENES: Se ancla a la parte inferior del contenedor */
+
     .landing-image-section {
-        /* Los estilos position: absolute son ineficientes aquí, usamos flex para centrar */
-        position: relative; /* Mantener para los hijos absolutos si se usan */
+        margin-top: 40px;
         width: 100%;
-        max-width: 700px;
-        height: 450px; /* Reducimos la altura para forzar que quepa en la pantalla */
-        margin-top: auto; /* Esto empuja la sección al final */
-        display: flex;
-        justify-content: center;
-        align-items: flex-end; /* Alinea los hijos (el móvil) al fondo de esta sección */
-        padding-bottom: 0;
     }
-    
-    /* 4. REPOSICIONAMIENTO DE LA IMAGEN MÓVIL DENTRO DE SU CONTENEDOR */
+
     .landing-mobile-app {
-        position: static; /* Cambiamos a static/relative para que la imagen sea responsiva */
-        width: 250px;
-        /* Ajustes de posición previos eliminados para centrado simple */
-        transform: none;
-        bottom: 0; /* Aseguramos que el pie de la imagen esté en el pie del contenedor */
-    }
-    
-    /* Ocultar elementos secundarios */
-    .landing-spain-map {
-        display: none; 
-    }
-    .landing-bottom-logo {
-        display: none;
+        max-width: 280px;
     }
 }
 
-@media (max-width: 768px) {
-    .landing-image-section {
-        height: 400px;
-    }
-    .landing-mobile-app {
-        width: 200px;
-    }
+@media (max-width: 576px) {
     .landing-text-section h1 {
         font-size: 2.8em;
     }
