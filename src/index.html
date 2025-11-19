@@ -36,10 +36,241 @@
     </div>
 
     <div class="landing-image-section">
-        <img src="images/mobile-app.png" alt="Aplicación móvil de Breathe Tracking" class="landing-mobile-app">
+        <img src="images/air-quality-map.png" alt="Aplicación móvil de Breathe Tracking" class="landing-mobile-app">
     </div>
 
+
+    <!-- ===== NUEVO: Indicador de Scroll ===== -->
+    <a href="#more-content" class="scroll-indicator">
+        <div class="mouse-icon">
+            <div class="mouse-wheel"></div>
+        </div>
+    </a>
+
+
 </main>
+
+    <!-- Añade este id="more-content" a tu siguiente sección -->
+    <section id="more-content" style="height: 100vh; padding: 20px;">
+        <!-- =================================================== -->
+        <!--  NUEVA SECCIÓN: PRINCIPALES CONTAMINANTES           -->
+        <!--  Reemplaza el <section> de ejemplo anterior con esto -->
+        <!-- =================================================== -->
+        <section id="more-content" class="contaminants-section">
+    
+            <!-- === Título de la Sección === -->
+            <div class="section-header">
+                <h2>TU AIRE, BAJO CONTROL</h2>
+                <p>Monitorea en tiempo real los principales contaminantes y protege tu salud</p>
+            </div>
+    
+            <!-- === Rejilla de Tarjetas === -->
+            <div class="contaminants-grid">
+    
+                <!-- Tarjeta 1: Ozono -->
+                <div class="contaminant-card">
+                    <div class="card-border border-o3"></div>
+                    <div class="card-content">
+                        <h3>Ozono <sub class="formula-o3">O3</sub></h3>
+                        <p class="description">Contaminante secundario de emisiones vehiculares</p>
+                        <p class="details">Gas irritante formado por reacción de NOx y COVs bajo luz solar. Afecta al
+                            sistema respiratorio.</p>
+    
+                        <ul class="card-levels">
+                            <li class="level-safe">
+                                <div class="level-info">
+                                    <span class="level-dot dot-safe"></span>
+                                    <span class="level-label">Seguro</span>
+                                </div>
+                                <span class="level-value">&le; 0.061 ppm</span>
+                            </li>
+                            <li class="level-risk">
+                                <div class="level-info">
+                                    <span class="level-dot dot-risk"></span>
+                                    <span class="level-label">Riesgo</span>
+                                </div>
+                                <span class="level-value">0.061 - 0.092 ppm</span>
+                            </li>
+                            <li class="level-danger">
+                                <div class="level-info">
+                                    <span class="level-dot dot-danger"></span>
+                                    <span class="level-label">Peligroso</span>
+                                </div>
+                                <span class="level-value">> 0.122 ppm</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Tarjeta 2: Monóxido de Carbono -->
+                <div class="contaminant-card">
+                    <div class="card-border border-co"></div>
+                    <div class="card-content">
+                        <h3>Monóxido de Carbono <sub class="formula-co">CO</sub></h3>
+                        <p class="description">Combustión incompleta de combustibles fósiles</p>
+                        <p class="details">Gas incoloro e inodoro, altamente tóxico. Impide el transporte de oxígeno en la
+                            sangre.</p>
+    
+                        <ul class="card-levels">
+                            <li class="level-safe">
+                                <div class="level-info">
+                                    <span class="level-dot dot-safe"></span>
+                                    <span class="level-label">Seguro</span>
+                                </div>
+                                <span class="level-value">&le; 10 mg/m³</span>
+                            </li>
+                            <li class="level-risk">
+                                <div class="level-info">
+                                    <span class="level-dot dot-risk"></span>
+                                    <span class="level-label">Riesgo</span>
+                                </div>
+                                <span class="level-value">10 - 30 mg/m³</span>
+                            </li>
+                            <li class="level-danger">
+                                <div class="level-info">
+                                    <span class="level-dot dot-danger"></span>
+                                    <span class="level-label">Peligroso</span>
+                                </div>
+                                <span class="level-value">> 30 mg/m³</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Tarjeta 3: Dióxido de Nitrógeno -->
+                <div class="contaminant-card">
+                    <div class="card-border border-no2"></div>
+                    <div class="card-content">
+                        <h3>Dióxido de Nitrógeno <sub class="formula-no2">NO2</sub></h3>
+                        <p class="description">Tráfico (motores diésel) e industria</p>
+                        <p class="details">Gas irritante pardo-rojizo. Reduce la función pulmonar y aumenta infecciones
+                            respiratorias.</p>
+    
+                        <ul class="card-levels">
+                            <li class="level-safe">
+                                <div class="level-info">
+                                    <span class="level-dot dot-safe"></span>
+                                    <span class="level-label">Seguro</span>
+                                </div>
+                                <span class="level-value">&le; 200 µg/m³</span>
+                            </li>
+                            <li class="level-risk">
+                                <div class="level-info">
+                                    <span class="level-dot dot-risk"></span>
+                                    <span class="level-label">Riesgo</span>
+                                </div>
+                                <span class="level-value">200 - 400 µg/m³</span>
+                            </li>
+                            <li class="level-danger">
+                                <div class="level-info">
+                                    <span class="level-dot dot-danger"></span>
+                                    <span class="level-label">Peligroso</span>
+                                </div>
+                                <span class="level-value">> 400 µg/m³</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Tarjeta 4: Dióxido de Azufre -->
+                <div class="contaminant-card">
+                    <div class="card-border border-so2"></div>
+                    <div class="card-content">
+                        <h3>Dióxido de Azufre <sub class="formula-so2">SO2</sub></h3>
+                        <p class="description">Quema de combustibles con azufre</p>
+                        <p class="details">Gas con olor fuerte. Causa irritación respiratoria, especialmente peligroso para
+                            asmáticos.</p>
+    
+                        <ul class="card-levels">
+                            <li class="level-safe">
+                                <div class="level-info">
+                                    <span class="level-dot dot-safe"></span>
+                                    <span class="level-label">Seguro</span>
+                                </div>
+                                <span class="level-value">&le; 350 µg/m³</span>
+                            </li>
+                            <li class="level-risk">
+                                <div class="level-info">
+                                    <span class="level-dot dot-risk"></span>
+                                    <span class="level-label">Riesgo</span>
+                                </div>
+                                <span class="level-value">350 - 500 µg/m³</span>
+                            </li>
+                            <li class="level-danger">
+                                <div class="level-info">
+                                    <span class="level-dot dot-danger"></span>
+                                    <span class="level-label">Peligroso</span>
+                                </div>
+                                <span class="level-value">> 500 µg/m³</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Tarjeta 5: Dióxido de Carbono -->
+                <div class="contaminant-card">
+                    <div class="card-border border-co2"></div>
+                    <div class="card-content">
+                        <h3>Dióxido de Carbono <sub class="formula-co2">CO2</sub></h3>
+                        <p class="description">Exhalación humana y combustión</p>
+                        <p class="details">Indicador de ventilación en interiores. Altas concentraciones causan fatiga y
+                            bajo rendimiento.</p>
+    
+                        <ul class="card-levels">
+                            <li class="level-safe"> <!-- Adaptado a Óptimo/Inadecuado -->
+                                <div class="level-info">
+                                    <span class="level-dot dot-safe"></span>
+                                    <span class="level-label">Óptimo</span>
+                                </div>
+                                <span class="level-value">&le; 800 ppm</span>
+                            </li>
+                            <li class="level-risk">
+                                <div class="level-info">
+                                    <span class="level-dot dot-risk"></span>
+                                    <span class="level-label">Inadecuado</span>
+                                </div>
+                                <span class="level-value">800 - 5,000 ppm</span>
+                            </li>
+                            <li class="level-danger">
+                                <div class="level-info">
+                                    <span class="level-dot dot-danger"></span>
+                                    <span class="level-label">Peligroso</span>
+                                </div>
+                                <span class="level-value">> 5,000 ppm</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+            </div> <!-- Fin .contaminants-grid -->
+    
+        </section>
+    
+        <!-- =================================================== -->
+        <!--  NUEVA SECCIÓN: POR QUÉ MONITORIZAR                 -->
+        <!-- =================================================== -->
+        <section class="why-monitor-section">
+            <div class="why-monitor-content">
+                <h2>¿POR QUÉ MONITORIZAR LA CALIDAD DEL AIRE?</h2>
+                <p>
+                    La exposición prolongada a niveles altos de contaminantes puede afectar gravemente tu salud
+                    respiratoria y cardiovascular. Cada contaminante actúa de manera diferente en tu organismo,
+                    desde irritaciones leves hasta daños pulmonares graves.
+                </p>
+                <div class="cta-pills">
+                    <span class="cta-pill">Alertas en Tiempo Real</span>
+                    <span class="cta-pill">Informes Personalizados</span>
+                    <span class="cta-pill">Protección Familiar</span>
+                </div>
+            </div>
+        </section>
+
+
+    <footer class="main-footer-landing">
+        <p>&copy; 2025 Breathe Tracking. Todos los derechos reservados.</p>
+    </footer>
+
+
 
 </body>
 </html>

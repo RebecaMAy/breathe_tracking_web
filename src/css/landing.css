@@ -7,13 +7,16 @@
     justify-content: space-between;
     padding: 6vh 8%;
     flex-grow: 1;
-    position: relative;
+    position: relative; /* Ya tenías 'relative', lo cual es perfecto */
 
     /* --- NUEVA IMAGEN DE FONDO (tema: aire / ciudad) --- */
-    background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80');
+    background-image: url('../images/landing-background.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+
+    /* Añadimos min-height para asegurar que cubre la pantalla (menos el header) */
+    min-height: calc(100vh - 90px); 
 }
 
 /* --- Overlay --- */
@@ -98,11 +101,68 @@
 
 .landing-mobile-app {
     width: 100%;
-    max-width: 340px;
+    max-width: 400px;
     height: auto;
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.25));
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.25));
+    position: relative;
+
+    /* --- NUEVO: Bordes redondeados --- */
+    border-radius: 20px;
+    /* ¡Ajusta este valor como quieras! */
+
+    /* --- NUEVO: Transición suave --- */
+    /* Le decimos que anime la propiedad 'filter' cuando cambie */
+    transition: filter 0.3s ease-out;
+}
+
+/* --- NUEVO: Resplandor azul en hover --- */
+.landing-mobile-app:hover {
+    /* Mantenemos el drop-shadow original Y AÑADIMOS un segundo
+       drop-shadow para el resplandor azul. ¡Se pueden apilar!
+       He usado el color azul de tu botón (#5BA3F5)
+    */
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3)) 
+            drop-shadow(0 0 15px rgba(91, 163, 245, 0.7));
+}
+
+/* --- NUEVO: Estilos del icono de Scroll --- */
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px; /* Distancia desde abajo */
+    left: 50%;
+    transform: translateX(-50%); /* Centrado horizontal */
+    z-index: 5;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-indicator:hover {
+    opacity: 0.7;
+}
+
+.mouse-icon {
+    width: 28px;
+    height: 48px;
+    border: 2px solid #ffffff;
+    border-radius: 15px; /* Para hacerlo ovalado/cápsula */
     position: relative;
 }
+
+.mouse-wheel {
+    width: 4px;
+    height: 8px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    position: absolute;
+    top: 8px; /* Posición inicial de la "ruedita" */
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Aquí vinculamos la animación */
+    animation: scrollAnim 2s ease-in-out infinite;
+}
+/* ------------------------------------------ */
+
 
 /* Animaciones */
 @keyframes fadeInText {
@@ -114,6 +174,28 @@
     from { opacity: 0; transform: translateX(50px); }
     to { opacity: 1; transform: translateX(0); }
 }
+
+/* --- NUEVO: Animación para la ruedita del ratón --- */
+@keyframes scrollAnim {
+    0% {
+        opacity: 1;
+        top: 8px; /* Posición inicial */
+    }
+    30% {
+        opacity: 1;
+        top: 14px; /* Baja un poco */
+    }
+    60% {
+        opacity: 0;
+        top: 24px; /* Baja más y desaparece */
+    }
+    100% {
+        opacity: 0;
+        top: 8px; /* Resetea a la posición inicial (invisible) */
+    }
+}
+/* ------------------------------------------------- */
+
 
 /* Responsive */
 @media (max-width: 992px) {
@@ -142,10 +224,309 @@
     .landing-mobile-app {
         max-width: 280px;
     }
+
+    /* --- NUEVO: Ajuste responsive del scroll --- */
+    .scroll-indicator {
+        bottom: 20px; /* Un poco más arriba en móvil */
+    }
 }
 
 @media (max-width: 576px) {
     .landing-text-section h1 {
         font-size: 2.8em;
     }
+
+    /* --- NUEVO: Ocultamos el indicador en pantallas muy pequeñas --- */
+    /* (Opcional, puedes quitar esto si quieres que se vea siempre) */
+    .scroll-indicator {
+        display: none;
+    }
+}
+
+
+/* ===================================================
+   NUEVA SECCIÓN: CONTAMINANTES
+   =================================================== */
+
+.contaminants-section {
+    padding: 80px 5%; /* 80px de espacio arriba/abajo, 5% a los lados */
+    background: white;
+    text-align: center;
+}
+
+.section-header {
+    max-width: 600px;
+    margin: 0 auto 50px auto; /* Centrado y con espacio abajo */
+}
+
+.section-header h2 {
+    font-family: var(--font-headings); /* Usamos la fuente de títulos */
+    font-size: 4em;
+    color: var(--primary-dark-blue);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.section-header p {
+    font-size: 1.1em;
+    color: #555;
+    line-height: 1.6;
+}
+
+.contaminants-grid {
+    display: grid;
+    /* Columnas: 3 en escritorio, se ajustará luego en responsive */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px; /* Espacio entre tarjetas */
+    max-width: 1200px; /* Ancho máximo de la rejilla */
+    margin: 0 auto; /* Centrar la rejilla */
+}
+
+.contaminant-card {
+    background: #ffffff;
+    border-radius: 12px;
+    /* Sombra suave como en la imagen */
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.07);
+    text-align: left;
+    overflow: hidden; /* Para que el borde de color se ajuste a las esquinas */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contaminant-card:hover {
+    transform: translateY(-5px); /* Efecto "levantar" */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.card-border {
+    height: 6px; /* Altura del borde de color */
+    width: 100%;
+}
+
+/* Colores de los bordes (¡puedes ajustar estos colores!) */
+.border-o3  { background: linear-gradient(90deg, #8A2BE2, #C71585); } /* Morado/Fucsia */
+.border-co  { background: linear-gradient(90deg, #FF8C00, #FFA500); } /* Naranja */
+.border-no2 { background: linear-gradient(90deg, #FFD700, #F0E68C); } /* Amarillo */
+.border-so2 { background: linear-gradient(90deg, #00BFFF, #1E90FF); } /* Azul */
+.border-co2 { background: linear-gradient(90deg, #32CD32, #98FB98); } /* Verde */
+
+/* --- NUEVO: Colores para las fórmulas químicas --- */
+/* (Basados en los colores de los bordes de las tarjetas) */
+.formula-o3  { color: #8A2BE2; } /* Morado */
+.formula-co  { color: #FF8C00; } /* Naranja */
+.formula-no2 { color: #E6A100; } /* Un oro más oscuro para legibilidad */
+.formula-so2 { color: #00BFFF; } /* Azul */
+.formula-co2 { color: #32CD32; } /* Verde */
+
+.card-content {
+    padding: 25px;
+}
+
+.card-content h3 {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* El <sub> para la fórmula química */
+
+.card-content h3 sub {
+    font-size: 0.7em;
+    font-weight: 600;
+    vertical-align: super; /* Sube un poco el número */
+}
+
+.card-content .description {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.card-content .details {
+    font-size: 0.9em;
+    color: #777;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    min-height: 60px; /* Para alinear un poco las tarjetas */
+}
+
+.card-levels {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espacio entre niveles */
+}
+
+.card-levels li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95em;
+}
+
+.level-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el punto y el texto */
+}
+
+.level-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0; /* Para que no se encoja */
+}
+
+.level-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.level-value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Colores de fondo y puntos para niveles */
+.level-safe   { background-color: rgba(82, 196, 26, 0.08); }
+.dot-safe     { background-color: #52c41a; }
+
+.level-risk   { background-color: rgba(250, 173, 20, 0.08); }
+.dot-risk     { background-color: #faad14; }
+
+.level-danger { background-color: rgba(245, 34, 45, 0.08); }
+.dot-danger   { background-color: #f5222d; }
+
+
+/* ===================================================
+   NUEVA SECCIÓN: POR QUÉ MONITORIZAR
+   =================================================== */
+
+/* Reemplaza tu regla .why-monitor-section por esta: */
+.why-monitor-section {
+    /* Usamos el azul oscuro del header */
+    background-color: var(--primary-dark-blue);
+    color: #ffffff;
+    padding: 60px 5%;
+    max-width: 1100px;
+    /* AQUÍ ESTÁ LA CLAVE: 
+       60px arriba, auto a los lados, 80px abajo 
+    */
+    margin: 60px auto 80px auto; 
+    border-radius: 12px;
+    text-align: center;
+}
+
+.why-monitor-content {
+    max-width: 750px; /* Ancho del texto */
+    margin: 0 auto;
+}
+
+.why-monitor-content h2 {
+    font-family: var(--font-headings);
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.why-monitor-content p {
+    font-size: 1.1em;
+    line-height: 1.7;
+    opacity: 0.85; /* Texto un poco más suave */
+    margin-bottom: 30px;
+}
+
+.cta-pills {
+    display: flex;
+    flex-wrap: wrap; /* Para que se ajusten en móvil */
+    justify-content: center;
+    gap: 15px;
+}
+
+.cta-pill {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.9em;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background-color 0.3s ease;
+    /* --- NUEVO: Cambia el cursor para que no parezcan links --- */
+    cursor: default;
+}
+
+.cta-pill:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* --- CAMBIO: Quitado el efecto de "levantar" --- */
+    transform: none; 
+}
+
+
+/* ===================================================
+   AJUSTES RESPONSIVE PARA LAS NUEVAS SECCIONES
+   =================================================== */
+
+@media (max-width: 992px) {
+    .contaminants-grid {
+        /* 2 columnas en tablets */
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .why-monitor-section {
+        /* Ocupa más ancho en tablets */
+        margin: 60px 3%;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-header h2 {
+        font-size: 2.4em;
+    }
+
+    .contaminants-grid {
+        /* 1 columna en móviles */
+        grid-template-columns: 1fr;
+    }
+
+    .card-content .details {
+        min-height: auto; /* Quitamos la altura mínima en móvil */
+    }
+
+    .why-monitor-content h2 {
+        font-size: 1.8em;
+    }
+
+    .why-monitor-content p {
+        font-size: 1em;
+    }
+
+    .cta-pills {
+        flex-direction: column; /* Botones uno encima de otro */
+        gap: 10px;
+    }
+
+    .cta-pill {
+        font-size: 1em; /* Texto más grande para tocar fácil */
+    }
+}
+
+/* ===================================================
+   NUEVO: Estilos del Footer
+   =================================================== */
+
+.main-footer-landing {
+    padding: 30px 5%;
+    background-color: #f4f6f8; /* Un gris muy claro */
+    text-align: center;
+    color: #888;
+    font-size: 0.9em;
+    border-top: 1px solid #e0e0e0; /* Una línea sutil de separación */
 }
