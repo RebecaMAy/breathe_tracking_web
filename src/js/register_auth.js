@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const codigoPostalInput = document.getElementById("codigoPostal");
             const codigoPostal = codigoPostalInput ? codigoPostalInput.value.trim() : "";
             
-            // ⭐️ NUEVO: Obtenemos la casilla de política de privacidad
+            // Casilla de política de privacidad
             // Asegúrate de tener en tu HTML un input así: <input type="checkbox" id="privacyPolicy">
             const privacyPolicy = document.getElementById("privacyPolicy");
 
@@ -74,14 +74,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // --- INICIO DE VALIDACIONES (FRONT-END) ---
 
-            // 2. ⭐️ VALIDACIÓN: Ley de protección de datos
+            // 2. VALIDACIÓN: Ley de protección de datos
             // Comprobamos que la casilla de privacidad esté marcada.
             if (!privacyPolicy || !privacyPolicy.checked) {
                 if (errEl) errEl.textContent = "Debes aceptar la política de privacidad para registrarte.";
                 return; // Detenemos la ejecución
             }
 
-            // 3. ⭐️ VALIDACIÓN: Formato de correo electrónico
+            // 3. VALIDACIÓN: Formato de correo electrónico
             // Usamos la función auxiliar de arriba
             if (!esEmailValido(email)) {
                 if (errEl) errEl.textContent = "El formato del correo electrónico no es válido.";
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return; // Detenemos la ejecución
             }
 
-            // 5. ⭐️ VALIDACIÓN: Contraseña segura
+            // 5. VALIDACIÓN: Contraseña segura
             // Comprobamos las reglas de la imagen: número, mayúscula, carácter especial.
             // Añadimos también una longitud mínima (8 caracteres) como buena práctica.
             const tieneNumero = /\d/.test(password);

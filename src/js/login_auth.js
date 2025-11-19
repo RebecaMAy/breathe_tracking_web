@@ -2,7 +2,6 @@
 
 // 1)  AQUÍ CAMBIAR A LA URL DE LA API (Render)
 const API_BASE = "https://api-a044.onrender.com";
-// ej. cuando ella lo suba: 
 
 document.addEventListener('DOMContentLoaded', function() {
     // ======================================================
@@ -50,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // si la API devuelve el id del rol, como en tu tabla ("Id_Rol")
         if (data.Id_Rol !== undefined && data.Id_Rol !== null) {
-            // ⚠️ AJUSTA ESTOS IDs cuando sepáis los reales
+            // Asjustar si se cambian los ids de rol en la base de datos
             // Ejemplo típico:
             if (data.Id_Rol === 1) return "Administrador";
             if (data.Id_Rol === 2) return "Usuario";
@@ -116,69 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // opcional: redirigir
                 // setTimeout(() => window.location.href = "../index.html", 1500);
-
-            } catch (err) {
-                console.error(err);
-                if (errEl) errEl.textContent = "No se pudo conectar con el servidor";
-            }
-        });
-    }
-
-    // ======================================================
-    // D) REGISTRO
-    // ======================================================
-    const registerForm = document.getElementById("registerForm");
-    if (registerForm) {
-        registerForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            // IDs tal cual los tienes en registro.html
-            const nombre = document.getElementById("nombre").value.trim();
-            const email = document.getElementById("correo").value.trim();
-            const password = document.getElementById("contrasena").value.trim();
-            const repetir = document.getElementById("repetirContrasena").value.trim();
-            const codigoPostalInput = document.getElementById("codigoPostal");
-            const codigoPostal = codigoPostalInput ? codigoPostalInput.value.trim() : "";
-
-            const msgEl = document.getElementById("registerMsg");
-            const errEl = document.getElementById("registerError");
-
-            if (msgEl) msgEl.textContent = "";
-            if (errEl) errEl.textContent = "";
-
-            // validación simple de contraseñas
-            if (password !== repetir) {
-                if (errEl) errEl.textContent = "Las contraseñas no coinciden";
-                return;
-            }
-
-            try {
-                const res = await fetch(`${API_BASE}/register`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        nombre: nombre,
-                        email: email,
-                        password: password,
-                        codigo_postal: codigoPostal
-                        // el rol NO lo mandamos porque lo decidís vosotros en la API
-                    })
-                });
-
-                const data = await res.json();
-
-                if (!res.ok || !data.ok) {
-                    if (errEl) errEl.textContent = data.error || "No se pudo registrar";
-                    return;
-                }
-
-                // éxito
-                if (msgEl) msgEl.textContent = "✅ Registro completado. Ahora inicia sesión.";
-
-                // opcional: redirigir
-                // setTimeout(() => window.location.href = "./login.html", 1500);
 
             } catch (err) {
                 console.error(err);
