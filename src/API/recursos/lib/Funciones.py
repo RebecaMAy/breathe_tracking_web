@@ -1,9 +1,20 @@
 #LIBRERIAS
 import base64
+<<<<<<< Updated upstream
+=======
+import resend
+from flask import render_template
+>>>>>>> Stashed changes
 
 #LLAMADA A BBDDD
 from recursos.lib.ConexionBBDD import db
 
+<<<<<<< Updated upstream
+=======
+from recursos.lib.Globales import URL_PHP_BASE, LOGO_URL,RESEND_API_KEY
+from recursos.lib.Mensajes import asunto_verificacion, remitente
+
+>>>>>>> Stashed changes
 """
 -----------------------------------------
 str -> obtener_usuario() -> dict OR None
@@ -43,4 +54,43 @@ Devuelve: Dato hasheado
 -----------------------------------------
 """
 def codificar_parametro(valor):
+<<<<<<< Updated upstream
     return base64.urlsafe_b64encode(valor.encode()).decode()
+=======
+    return base64.urlsafe_b64encode(valor.encode()).decode()
+
+"""
+-----------------------------------------
+str, str -> validacion_token() -> str OR Exception
+-----------------------------------------
+Recibe: Email y token
+-----------------------------------------
+Devuelve: Respuesta del envio
+-----------------------------------------
+"""
+resend.api_key = RESEND_API_KEY
+def enviar_correo_verificacion(email_destino, token):
+   
+    # 1. Generar Link
+    p1_hash = codificar_parametro(email_destino)
+    p2_hash = codificar_parametro(token)
+    link_final = f"{URL_PHP_BASE}/verificar_usuario.php?p1={p1_hash}&p2={p2_hash}"
+    
+    #COMPLETAR HTML
+    html_content = render_template(
+        'verificacion.html', #RUTA NEWLETTERS: templates/...
+        link_verificacion=link_final,
+        logo_url=LOGO_URL
+    )
+
+    # 3. Enviar con Resend
+    params = {
+        "from": remitente,
+        "to": email_destino,
+        "subject": asunto_verificacion,
+        "html": html_content,
+    }
+
+    r = resend.Emails.send(params)
+    return r
+>>>>>>> Stashed changes

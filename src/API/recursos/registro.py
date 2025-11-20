@@ -7,6 +7,10 @@ import secrets
 import string
 
 from recursos.lib.ConexionBBDD import db
+<<<<<<< Updated upstream
+=======
+from recursos.lib.Funciones import enviar_correo_verificacion
+>>>>>>> Stashed changes
 
 # Asumimos que importas 'db' desde tu configuración de conexión
 # from app import db 
@@ -65,7 +69,28 @@ class Registro(Resource):
             resultado = crear_usuario_transactional(transaction, user_ref, sub_ref, user_data, sub_data)
             
             if resultado:
+<<<<<<< Updated upstream
                 return {"ok": True, "message": "Usuario registrado con éxito", "token": token_aleatorio}, 201
+=======
+                try:
+                    
+                    enviar_correo_verificacion(correo, token_aleatorio)
+                    
+                    return {
+                        "ok": True, 
+                        "message": "Usuario registrado y correo de verificación enviado."
+                    }, 201
+                    
+                except Exception as e:
+                    # IMPORTANTE: El usuario ya se creó en la BD, pero falló el correo.
+                    # No devolvemos error 500, sino un 201 con advertencia.
+                    print(f"Error crítico enviando email: {e}")
+                    return {
+                        "ok": True, 
+                        "message": "Usuario registrado, pero hubo un error enviando el correo de verificación. Por favor solicite uno nuevo."
+                    }, 201
+                
+>>>>>>> Stashed changes
             else:
                 return {"ok": False, "error": "El correo electrónico ya está en uso."}, 409
 
