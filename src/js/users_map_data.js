@@ -60,23 +60,27 @@ function calculatePollutionAtLocation(lat, lng, type) {
 }
 
 
-// --- OBTENER DETALLES (AHORA INTELIGENTE) ---
+// --- OBTENER DETALLES ---
 function getPinDetails(lat, lng) {
-    // Calculamos los valores reales basados en la posición del pin
+    // 1. Calculamos Ozono (0 a 1)
     const valO3 = calculatePollutionAtLocation(lat, lng, 'O3');
-    // Simulamos radiación y temp algo relacionadas (más calor en centro ciudad)
     
-    // Temperatura base 20 + un poco aleatorio
+    // 2. Calculamos CO2 REAL usando tu función de mapa de calor
+    // La función devuelve de 0.0 a 1.0.
+    const rawCO2 = calculatePollutionAtLocation(lat, lng, 'CO2');
+
+    // 3. Escalamos el CO2 para que encaje en la barra de 0 a 50
+    // Si el mapa dice 0.5 (medio contaminado), la barra mostrará 25.
+    const valCO2_Scaled = (rawCO2 * 50).toFixed(0);
+    
+    // 4. Temperatura simulada
     const valTemp = (20 + (Math.random() * 5) + (valO3 * 5)).toFixed(1); 
-    
-    // Radiación
-    const valRad = (10 + (Math.random() * 10) + (valO3 * 10)).toFixed(0);
 
     return {
-        // Calculamos O3 basado en el mapa
         ozono: valO3, 
-        // Datos simulados pero coherentes
-        radiacion: valRad,
+        // Devolvemos el valor del CO2 en la propiedad 'radiacion' 
+        // para que users_map.js lo pinte en la barra correcta sin tocar ese archivo.
+        radiacion: valCO2_Scaled,
         temperatura: valTemp,
         ultimasMediciones: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
     };
