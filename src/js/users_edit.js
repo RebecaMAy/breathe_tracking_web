@@ -1,54 +1,68 @@
-import { FIREBASE_CONFIG } from './firebase_config.js';
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
-import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js';
+// users_edit.js: Módulo que maneja el modal de Edición de Perfil de forma simulada.
 
-// users_edit.js: module that manages the Edit Profile modal, validation and saving
 const modal = document.getElementById('modal-edit');
 const form = document.getElementById('editForm');
 const btnEdit = document.getElementById('btn-edit');
 const btnCancel = document.getElementById('edit-cancel');
+const statusEl = document.getElementById('status'); // Referencia al elemento de estado global
 
-let firestore = null;
-let firebaseApp = null;
+// Solución de Accesibilidad: Almacena el elemento que tenía el foco antes de abrir el modal
+let elementFocusedBeforeModal = null; 
 
-function initFirebaseIfConfigured() {
-  try {
-    if (FIREBASE_CONFIG && Object.keys(FIREBASE_CONFIG).length) {
-      firebaseApp = initializeApp(FIREBASE_CONFIG);
-      firestore = getFirestore(firebaseApp);
-      return true;
-    }
-  } catch (err) {
-    console.warn('Firebase init failed:', err);
-  }
-  return false;
-}
-
+/** Abre el modal de edición y precarga los datos actuales. */
 function openModal() {
-  // populate with current DOM values
-  document.getElementById('edit-nombre').value = document.getElementById('p-nombre').textContent || '';
-  document.getElementById('edit-apellidos').value = document.getElementById('p-apellidos').textContent || '';
-  document.getElementById('edit-telefono').value = document.getElementById('p-telefono').textContent || '';
-  document.getElementById('edit-email').value = document.getElementById('p-email').textContent || '';
+  // Guarda el elemento que tenía el foco antes de abrir el modal (generalmente btnEdit)
+  elementFocusedBeforeModal = document.activeElement;
 
+  // 1. Precarga los campos del modal con los valores actuales del DOM
+  document.getElementById('edit-nombre').value = document.getElementById('p-nombre').textContent.trim() || '';
+  document.getElementById('edit-apellidos').value = document.getElementById('p-apellidos').textContent.trim() || '';
+  // Se ignora el valor "—" si el campo está vacío
+  const telefonoValue = document.getElementById('p-telefono').textContent.trim();
+  document.getElementById('edit-telefono').value = (telefonoValue === '—' ? '' : telefonoValue) || '';
+  document.getElementById('edit-email').value = document.getElementById('p-email').textContent.trim() || '';
+
+  // 2. Muestra el modal
   modal.setAttribute('aria-hidden', 'false');
   modal.classList.add('show');
+  
+  // 3. Mueve el foco al primer campo del formulario para accesibilidad
+  document.getElementById('edit-nombre').focus(); 
 }
 
+/** Cierra el modal de edición. */
 function closeModal() {
+  // 1. Oculta el modal
   modal.setAttribute('aria-hidden', 'true');
   modal.classList.remove('show');
   clearFieldErrors();
+  
+  // 2. Devuelve el foco al elemento que lo tenía antes (el botón 'Editar')
+  if (elementFocusedBeforeModal) {
+    elementFocusedBeforeModal.focus();
+    elementFocusedBeforeModal = null; // Limpia la referencia
+  }
 }
 
+/** Muestra un error bajo un campo específico. */
 function showFieldError(name, message) {
   const el = document.querySelector(`.field-error[data-for="${name}"]`);
   if (el) { el.textContent = message; el.classList.add('show'); }
 }
+
+/** Limpia todos los mensajes de error de los campos. */
 function clearFieldErrors() {
   document.querySelectorAll('.field-error').forEach(e => { e.textContent=''; e.classList.remove('show'); });
 }
 
+/** 🚨 MODIFICADO: Esta función ya no muestra ningún mensaje de estado en la página. */
+function showPageStatus(message, type = 'info') {
+    // La función no hace nada, asegurando que el mensaje de éxito no se muestre.
+    // console.log(`[Estatus Deshabilitado] Mensaje: ${message}`); // Puedes dejar esto si quieres verlo en la consola
+    return;
+}
+
+/** Valida los campos del formulario. */
 function validate(values) {
   clearFieldErrors();
   let ok = true;
@@ -61,33 +75,47 @@ function validate(values) {
   if (!values.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
     showFieldError('email','Email no válido.'); ok = false;
   }
-  if (values.telefono && !/^[0-9\-\s+()]{6,20}$/.test(values.telefono)) {
+  // Permite que el teléfono sea opcional
+  if (values.telefono && values.telefono.trim().length > 0 && !/^[0-9\-\s+()]{6,20}$/.test(values.telefono)) {
     showFieldError('telefono','Teléfono no válido.'); ok = false;
   }
   return ok;
 }
 
-async function saveToFirestore(uid, payload) {
-  if (!firestore) throw new Error('Firestore no inicializado');
-  const docRef = doc(firestore, 'users', String(uid));
-  await setDoc(docRef, payload, { merge: true });
-}
-
-function saveToLocalStorage(userObj) {
-  // try to merge with existing localStorage.user
+/** Guarda o actualiza los datos del usuario en localStorage. */
+function saveToLocalStorage(payload) {
   try {
     const raw = localStorage.getItem('user');
-    if (!raw) { localStorage.setItem('user', JSON.stringify(userObj)); return; }
-    const existing = JSON.parse(raw);
-    const merged = { ...existing, ...userObj };
-    localStorage.setItem('user', JSON.stringify(merged));
+    if (!raw) { 
+        localStorage.setItem('user', JSON.stringify(payload)); 
+        return; 
+    }
+    
+    let existingData = JSON.parse(raw);
+    let existingUser = existingData.user || existingData.usuario || existingData;
+    
+    const mergedUser = { ...existingUser, ...payload };
+    
+    if (existingData.user) {
+        existingData.user = mergedUser;
+    } else if (existingData.usuario) {
+        existingData.usuario = mergedUser;
+    } else {
+        existingData = mergedUser;
+    }
+
+    localStorage.setItem('user', JSON.stringify(existingData));
   } catch (e) {
-    localStorage.setItem('user', JSON.stringify(userObj));
+    console.error('Error al guardar en localStorage:', e);
+    localStorage.setItem('user', JSON.stringify(payload));
   }
 }
 
+/** Maneja el envío del formulario de edición. */
 async function handleSubmit(e) {
   e.preventDefault();
+  
+  // 1. Obtiene los valores del formulario
   const values = {
     nombre: document.getElementById('edit-nombre').value.trim(),
     apellidos: document.getElementById('edit-apellidos').value.trim(),
@@ -95,9 +123,10 @@ async function handleSubmit(e) {
     email: document.getElementById('edit-email').value.trim(),
   };
 
+  // 2. Valida los datos
   if (!validate(values)) return;
 
-  // prepare payload
+  // 3. Prepara el objeto de datos a guardar (payload)
   const payload = {
     nombre: values.nombre,
     apellidos: values.apellidos,
@@ -106,44 +135,37 @@ async function handleSubmit(e) {
     updated_at: new Date().toISOString()
   };
 
-  // determine user id from localStorage if any
-  const raw = localStorage.getItem('user');
-  let uid = null;
-  try { if (raw) { const d = JSON.parse(raw); uid = d.id_usuario ?? d.id ?? d.userId ?? d.email ?? null; } } catch(e){}
-
-  // try save to firebase if configured
-  const firebaseOk = initFirebaseIfConfigured();
+  // 4. Guarda la simulación localmente
   try {
-    if (firebaseOk && uid) {
-      // use uid (or email) as doc id
-      const docId = String(uid).replace(/[@.]/g,'_');
-      await saveToFirestore(docId, payload);
-    } else {
-      // fallback: update localStorage
-      const userObj = { ...(raw ? JSON.parse(raw) : {}), ...payload };
-      saveToLocalStorage(userObj);
-    }
+    saveToLocalStorage(payload);
 
-    // update DOM values
+    // 5. Actualiza los valores mostrados en el DOM del perfil
     document.getElementById('p-nombre').textContent = payload.nombre;
     document.getElementById('p-apellidos').textContent = payload.apellidos;
-    document.getElementById('p-telefono').textContent = payload.telefono;
+    document.getElementById('p-telefono').textContent = payload.telefono || '—';
     document.getElementById('p-email').textContent = payload.email;
 
+    // 6. Cierra el modal. La función showPageStatus ya no mostrará el mensaje.
     closeModal();
-    // small success feedback
-    const status = document.getElementById('status');
-    if (status) { status.textContent = 'Perfil actualizado.'; status.className='status-bar show'; setTimeout(()=>{ status.className='status-bar'; status.textContent=''; }, 2200); }
+    showPageStatus('Perfil actualizado (simulación local).', 'success'); // Esta línea ya no tiene efecto visual
   } catch (err) {
+    // Si hay un error, SÍ se recomienda mostrar un mensaje de error si es posible,
+    // o al menos dejar el console.error.
     console.error('Save profile failed', err);
-    showFieldError('email','No se pudo guardar. Revisa la conexión.');
+    showFieldError('email','No se pudo guardar localmente. Revisa la consola.');
   }
 }
 
-// wire events
+// 7. Conexión de eventos
+// Muestra el modal de edición
 btnEdit?.addEventListener('click', openModal);
+// Cierra el modal con el botón Cancelar
 btnCancel?.addEventListener('click', closeModal);
-modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+// Cierra el modal al hacer click fuera del mismo
+modal?.addEventListener('click', (e) => { 
+  if (e.target === modal) closeModal(); 
+});
+// Maneja el guardado del formulario
 form?.addEventListener('submit', handleSubmit);
 
 // export for debugging/tests
