@@ -1,0 +1,299 @@
+/* src/css/admin_sensors.css */
+
+/* Hereda de global.css: fuentes, colores base, resets */
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header, .main-footer-landing {
+    flex-shrink: 0;
+    z-index: 50;
+}
+
+/* --- Layout Principal de las 2 Columnas --- */
+.main-content-admin {
+    display: flex;
+    flex: 1; /* Ocupa todo el espacio entre header y footer */
+    overflow: hidden; /* Para que los scrolls sean internos a las secciones */
+    background-color: #f8f9fa; /* Fondo ligero */
+}
+
+.admin-section {
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-shrink: 0; /* Para que no se encoja al haber scroll */
+}
+
+.sensors-list-section .section-header {
+    display: flex;
+    flex-direction: column; /* Ponemos uno debajo del otro */
+    align-items: flex-start; /* Alineados a la izquierda */
+    gap: 15px; /* Espacio entre el título y la cajita */
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-family: var(--font-headings);
+    color: var(--primary-dark-blue);
+    font-size: 2.2em;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.sensors-list-section .section-header h2 {
+    width: 100%;
+    white-space: nowrap; /* Obliga al texto a estar en una sola línea */
+    font-size: 2em; /* Ajustamos un poco el tamaño para que quepa bien */
+    line-height: 1;
+}
+
+/* --- Panel de Listado de Sensores --- */
+.sensors-list-section {
+    width: 450px; /* Ancho fijo para la lista */
+    background-color: #fff;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto; /* Scroll propio para la lista */
+}
+
+.filter-activity {
+    width: 100%; /* Que ocupe todo el ancho disponible */
+    box-sizing: border-box;
+    
+    /* Hacemos la caja más bajita y compacta */
+    padding: 6px 15px; 
+    font-size: 0.85em; /* Letra un poco más pequeña */
+    
+    display: flex;
+    justify-content: space-between; /* Label a la izquierda, Select a la derecha */
+    align-items: center;
+    
+    background-color: #f4f6f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.filter-activity label {
+    font-weight: 600;
+    color: var(--primary-dark-blue);
+    font-size: 0.9em;
+}
+
+/* Ajuste fino para el select dentro de la caja */
+.filter-activity select {
+    font-size: 1em;
+    color: var(--primary-dark-blue);
+    font-weight: 600;
+    background-color: transparent;
+}
+
+.sensors-container {
+    flex-grow: 1;
+    /* overflow-y: auto; Ya lo tiene la sección padre */
+    padding-right: 10px; /* Para el scrollbar */
+}
+
+.sensor-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px; /* Un poco menos redondeado */
+    
+    /* CAMBIOS DE TAMAÑO */
+    padding: 12px 15px;   /* Antes era 18px */
+    margin-bottom: 10px;  /* Antes era 15px */
+    
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;
+}
+
+.sensor-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border-color: #5BA3F5;
+}
+
+/* Icono más pequeño */
+.sensor-item .sensor-icon {
+    color: var(--primary-dark-blue);
+    font-size: 1.4em; /* Antes 1.8em */
+    margin-right: 15px;
+    flex-shrink: 0;
+    width: 30px;
+    text-align: center;
+}
+
+.sensor-item .sensor-info {
+    flex-grow: 1;
+}
+
+/* Texto del título más compacto */
+.sensor-item .sensor-info h4 {
+    margin: 0 0 2px 0; /* Menos margen abajo */
+    font-size: 1em;    /* Antes 1.2em */
+    color: var(--primary-dark-blue);
+    font-weight: 600;
+}
+
+/* Texto de dirección más pequeño */
+.sensor-item .sensor-info p {
+    margin: 0;
+    font-size: 0.85em; /* Antes 0.9em */
+    color: #666;
+    line-height: 1.3;
+}
+
+.sensor-item .sensor-info .last-conn {
+    color: #999;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.sensor-item .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Botón "Ver Informe" más pequeño para que quepa bien */
+.sensor-item .actions .button-report {
+    background-color: var(--primary-dark-blue);
+    color: white;
+    border: none;
+    
+    /* CAMBIOS DE TAMAÑO */
+    padding: 6px 12px;   /* Más pequeño */
+    font-size: 0.8em;    /* Letra más pequeña */
+    
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.sensor-item .actions .button-report:hover {
+    background-color: #364d66; /* Un poco más claro */
+}
+
+.sensor-item .actions .menu-dots {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+}
+.sensor-item .actions .menu-dots:hover { color: #5BA3F5; }
+
+.sensor-item.incident {
+    border-color: #ff4d4f; /* Rojo para incidencias */
+    box-shadow: 0 0 15px rgba(255, 77, 79, 0.2);
+    animation: pulseRed 1.5s infinite alternate;
+}
+
+@keyframes pulseRed {
+    from { box-shadow: 0 0 10px rgba(255, 77, 79, 0.1); }
+    to { box-shadow: 0 0 20px rgba(255, 77, 79, 0.4); }
+}
+
+
+/* --- Panel del Mapa de Sensores --- */
+.sensor-map-section {
+    flex-grow: 1;
+    padding-left: 0; /* Ya tiene padding en .admin-section, pero no queremos doble */
+    background-color: #f8f9fa;
+}
+
+.sensor-map-section .section-header {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    margin-bottom: 0; /* Ya lo maneja el padding inferior */
+}
+
+.sensor-map-section .section-header h2 {
+    font-size: 1.8em; /* Un poco más pequeño que el de la lista */
+    color: var(--primary-dark-text);
+}
+
+.filter-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.date-time-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-time-group label {
+    font-size: 0.9em;
+    color: #555;
+    font-weight: 500;
+}
+
+.date-time-group input[type="date"],
+.date-time-group input[type="time"] {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: var(--font-primary);
+    font-size: 0.9em;
+    color: #333;
+    outline: none;
+}
+
+.sensor-map-section .button-primary {
+    padding: 8px 18px;
+    font-size: 0.9em;
+    border-radius: 8px;
+}
+
+.admin-map {
+    flex-grow: 1;
+    background-color: #e6f2ff; /* Color de fondo del mapa */
+    border-radius: 0 0 12px 0; /* Esquinas redondeadas abajo a la derecha */
+    overflow: hidden; /* Para que el mapa no se salga */
+}
+
+/* Estilos de los marcadores personalizados de Leaflet */
+.leaflet-marker-icon.sensor-marker {
+    background-color: var(--primary-dark-blue);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-family: var(--font-primary);
+    font-size: 1em;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border: 2px solid white;
+}
+.leaflet-marker-icon.sensor-marker-incident {
+    background-color: #ff4d4f; /* Rojo para marcadores con incidencia */
+    border-color: #ffe0e0;
+}

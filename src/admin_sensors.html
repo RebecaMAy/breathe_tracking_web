@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Sensores - Breathe Tracking</title>
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/admin_sensors.css"> 
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <img src="images/logo-breathe-tracking.png" alt="Breathe Tracking Logo">
+        </div>
+        
+        <nav class="header-nav">
+            <a href="index.html" class="nav-button nav-button-ghost">Cerrar Sesión</a>
+        </nav>
+    </header>
+
+    <main class="main-content-admin">
+        <section class="admin-section sensors-list-section">
+            <div class="section-header">
+                <h2>Listado de Sensores</h2>
+                <div class="filter-activity">
+                    <label for="activityFilter">Actividad</label>
+                    <select id="activityFilter">
+                        <option value="all">Todos</option>
+                        <option value="incident">Con Incidencias</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="sensors-container" class="sensors-container">
+                </div>
+        </section>
+
+        <section class="admin-section sensor-map-section">
+            <div class="section-header">
+                <h2>Mapa de Sensores</h2>
+                <div class="filter-controls">
+                    <div class="date-time-group">
+                        <label for="adminDate">Día</label>
+                        <input type="date" id="adminDate" value="2025-10-01">
+                        <label for="adminTimeFrom">Desde</label>
+                        <input type="time" id="adminTimeFrom" value="00:00">
+                        <label for="adminTimeTo">Hasta</label>
+                        <input type="time" id="adminTimeTo" value="23:59">
+                    </div>
+                    <button class="button-primary">Punto Actual</button>
+                    <button class="button-primary">Buscar</button>
+                </div>
+            </div>
+            
+            <div id="admin-map" class="admin-map"></div>
+        </section>
+    </main>>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="js/admin_sensors_data.js"></script>
+    <script src="js/admin_sensors.js"></script>
+</body>
+</html>
