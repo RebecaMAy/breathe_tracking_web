@@ -1,55 +1,59 @@
 <?php
-// En plesk composer.json en httpdocs
-// segun la estructura del proyecto habra que salir x niveles
-require '../../vendor/autoload.php';
-
-use Google\Cloud\Firestore\FirestoreClient;
-use Google\Cloud\Core\Timestamp;
-
 // ==========================================
-// CONFIGURACIÓN DE CREDENCIALES
+// CONFIGURACIÓN API
 // ==========================================
+$API_BASE_URL = 'https://api-a044.onrender.com';
 
-// Ruta absoluta de credenciales firebase en Plesk (en mi caso home directory)
-$keyFilePath = '/p/vhosts/mrmenaya.upv.edu.es/serviceAccountKey.json';
-
-// ID de tu proyecto Firebase (lo encuentras en la configuración de Firebase o en el propio JSON)
-$projectId = 'proyecto-biometria-2025';
-
-// Inicializar Firestore
-try {
-    if (!file_exists($keyFilePath)) {
-        throw new Exception("No se encuentra el archivo de credenciales en: " . $keyFilePath);
-    }
-
-    $db = new FirestoreClient([
-        'keyFilePath' => $keyFilePath,
-        'projectId' => $projectId,
-    ]);
-} catch (Exception $e) {
-    die("Error de conexión con la base de datos.");
-    error_log($e->getMessage());
-}
+date_default_timezone_set('UTC');
 
 // ==========================================
 // FUNCIONES AUXILIARES
 // ==========================================
 
-// Función inversa a base64.urlsafe_b64encode() de Python para decodificar los parámetros
+// Decodificar parámetros URL
 function decodificar_parametro($input) {
-    $remainder = strlen($input) % 4;
-    if ($remainder) {
-        $padlen = 4 - $remainder;
-        $input .= str_repeat('=', $padlen);
-    }
     return base64_decode(strtr($input, '-_', '+/'));
+}
+
+
+/**
+ * Función genérica para hacer llamadas a tu API Python
+ */
+function llamada_api($metodo, $endpoint, $datos = null) {
+    global $API_BASE_URL;
+    $url = $API_BASE_URL . $endpoint;
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Configurar método
+    if ($metodo !== 'GET') {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $metodo);
+        if ($datos) {
+            $json_datos = json_encode($datos);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json_datos);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($json_datos)
+            ]);
+        }
+    }
+
+    $respuesta = curl_exec($ch);
+    $codigo_http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return [
+        'codigo' => $codigo_http,
+        'datos' => json_decode($respuesta, true)['data'] ?? null
+    ];
 }
 
 // ==========================================
 // LÓGICA PRINCIPAL
 // ==========================================
 
-// 1. Recibir parámetros de la URL
+// 1. Recibir parámetros
 $p1_hash = $_GET['p1'] ?? '';
 $p2_hash = $_GET['p2'] ?? '';
 
@@ -57,124 +61,110 @@ if (empty($p1_hash) || empty($p2_hash)) {
     die("Link inválido: Faltan parámetros.");
 }
 
-// 2. Decodificar (De-hashear) el correo y el token
+// 2. Decodificar
 $email = decodificar_parametro($p1_hash);
 $token_url = decodificar_parametro($p2_hash);
 
-// 3. Consultar BBDD
-try {
-    $docRef = $db->collection('usuarios')->document($email);
-    $snapshot = $docRef->snapshot();
-} catch (Exception $e) {
-    die("Error al consultar el usuario.");
+// 3. Consultar API para obtener datos del usuario (GET)
+// Asumimos que la ruta es /usuario/<email>
+$res_usuario = llamada_api('POST', '/usuario', ['email' => $email]);
+
+if ($res_usuario['codigo'] !== 200 || empty($res_usuario['datos'])) {
+    die("Enlace no válido o usuario no encontrado en la API." . $email );
 }
 
-if (!$snapshot->exists()) {
-    die("Enlace no válido o usuario no registrado.");
-}
+$data = $res_usuario['datos'];
 
-$data = $snapshot->data();
+// Extraer datos (Asegúrate de que tu API devuelve estas claves exactas)
 $token_db = $data['token'] ?? null;
-// 'validez' es un objeto Timestamp de Google Cloud
-$validez_db = $data['validez'] ?? null;
+$validez_str = $data['validez'] ?? null; // Vendrá como string fecha
 $estado_token = $data['estado_token'] ?? null;
 
 // 4. Validaciones de Seguridad
 
-// A) Validar que el token de la URL coincida con el de la BBDD
+// A) Validar token
 if ($token_db !== $token_url) {
-    die("Link inválido: El token de seguridad no coincide.");
+    die("Link inválido: El token de seguridad no coincide." . $token_url);
 }
 
-// B) Validar si ya está verificado (Estado 1)
+// B) Validar si ya está verificado
 if ($estado_token == 1) {
     echo generar_html_respuesta("¡Ya verificado!", "Tu cuenta ya había sido verificada anteriormente. Puedes iniciar sesión sin problemas.", true);
     exit;
 }
 
-// C) Validar la caducidad del token
-$ahora = new DateTime();
-$fecha_validez_dt = null;
+// C) Validar caducidad
+$ahora = time();
+$fecha_validez_timestamp = $validez_str ? strtotime($validez_str) : 0;
 
-if ($validez_db) {
-    // Convertir Timestamp de Firestore a DateTime de PHP
-    $fecha_validez_dt = $validez_db->get()->format('Y-m-d H:i:s');
-    $fecha_validez_object = new DateTime($fecha_validez_dt);
+// Si la fecha actual es mayor que la fecha de validez
+if ($ahora > $fecha_validez_timestamp) {
+    // --- CASO: TOKEN CADUCADO ---
 
-    if ($ahora > $fecha_validez_object) {
-        // --- CASO: TOKEN CADUCADO ---
+    // 1. Generar nuevos datos
+    $nuevo_token = substr(bin2hex(random_bytes(8)), 0, 16);
+    // Formato ISO 8601 compatible con Python/Javascript
+    $nueva_validez = date('Y-m-d\TH:i:s', strtotime('+1 day'));
 
-        // 1. Generar nuevo token y nueva fecha (24h extra)
-        $nuevo_token = substr(bin2hex(random_bytes(8)), 0, 16);
-        $nueva_validez = new Timestamp(new DateTime('+1 day'));
+    // 2. Actualizar Usuario en la API (PUT)
+    $datos_update = [
+        'email' => $email,
+        'token' => $nuevo_token,
+        'validez' => $nueva_validez
+    ];
 
-        // 2. Actualizar en Firestore
-        $docRef->update([
-            ['path' => 'token', 'value' => $nuevo_token],
-            ['path' => 'validez', 'value' => $nueva_validez]
-        ]);
+    $res_update = llamada_api('PUT', '/usuario', $datos_update);
 
-        $url_api = 'https://api-envio-correos.onrender.com/email/verificacion';
+    // 3. Enviar correo mediante la API (POST)
+    $datos_email = [
+        'email' => $email,
+        'token' => $nuevo_token
+    ];
+    $res_email = llamada_api('POST', '/email/verificacion', $datos_email);
 
-        $datos_post = json_encode([
-            'email' => $email,
-            'token' => $nuevo_token
-        ]);
-
-        $ch = curl_init($url_api);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $datos_post);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($datos_post)
-        ]);
-
-        $respuesta_api = curl_exec($ch);
-        $codigo_http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        // ----------------------------------------------------
-
-        // 4. Definir mensaje según el resultado de la API
-        if ($codigo_http == 200) {
-            $mensaje_usuario = "Este enlace ha caducado. Por seguridad, hemos generado nuevas credenciales y <b>te hemos enviado un nuevo correo automáticamente</b>. Revisa tu bandeja de entrada.";
-        } else {
-            // Si falla la API (Render dormido, error 500, etc), avisamos para que lo haga manual
-            $mensaje_usuario = "Este enlace ha caducado y hemos renovado tus credenciales. Sin embargo, hubo un error al enviarte el correo automáticamente. Por favor, <b>solicita un nuevo envío desde la aplicación</b>.";
-        }
-
-        // 5. Informar al usuario
-        echo generar_html_respuesta(
-            "Enlace caducado",
-            $mensaje_usuario,
-            false
-        );
-        exit;
+    // 4. Definir mensaje
+    if ($res_email['codigo'] == 200) {
+        $mensaje_usuario = "Este enlace ha caducado. Por seguridad, hemos generado nuevas credenciales y <b>te hemos enviado un nuevo correo automáticamente</b>.";
+    } else {
+        $mensaje_usuario = "Este enlace ha caducado. Hemos renovado tus credenciales pero hubo un error al enviar el correo. Por favor, <b>solicita un nuevo envío desde la App</b>.";
     }
+
+    echo generar_html_respuesta("Enlace caducado", $mensaje_usuario, false);
+    exit;
 }
 
 // ==========================================
 // CASO DE ÉXITO: VERIFICACIÓN COMPLETADA
 // ==========================================
 
-// Actualizar estado a verificado (1)
-$docRef->update([
-    ['path' => 'estado_token', 'value' => 1]
-]);
+// Actualizar estado a verificado (1) mediante API (PUT)
+$datos_confirmacion = [
+    'email' => $email,
+    'estado_token' => 1
+];
 
-// Mostrar HTML de éxito
-echo generar_html_respuesta(
-    "¡Cuenta Verificada!",
-    "Gracias por confirmar tu correo ($email). <br>Ya tienes acceso completo a Breathe Tracking.",
-    true
-);
+$res_confirmacion = llamada_api('PUT', '/usuario', $datos_confirmacion);
+
+if ($res_confirmacion['codigo'] == 200) {
+    echo generar_html_respuesta(
+        "¡Cuenta Verificada!",
+        "Gracias por confirmar tu correo ($email). <br>Ya tienes acceso completo a Breathe Tracking.",
+        true
+    );
+} else {
+    echo generar_html_respuesta(
+        "Error",
+        "El token es correcto, pero hubo un error al actualizar tu estado en el servidor. Intenta de nuevo.",
+        false
+    );
+}
 
 
 // ==========================================
-// FUNCIÓN PARA GENERAR EL HTML (DISEÑO)
+// FUNCIÓN HTML (SIN CAMBIOS)
 // ==========================================
 function generar_html_respuesta($titulo, $mensaje, $exito) {
-    $color = $exito ? '#28a745' : '#dc3545'; // Verde o Rojo
+    $color = $exito ? '#28a745' : '#dc3545';
     $icono = $exito ? '✅' : '⚠️';
 
     return <<<HTML
@@ -199,7 +189,7 @@ function generar_html_respuesta($titulo, $mensaje, $exito) {
             <span class="icon">{$icono}</span>
             <h1 style="color: {$color}">{$titulo}</h1>
             <p>{$mensaje}</p>
-            <a href="https://tudominio.com/login" class="btn">Ir a Iniciar Sesión</a>
+            <a href="https://mrmenaya.upv.edu.es/proyecto_biometria/src/auth/login.html" class="btn">Ir a Iniciar Sesión</a>
         </div>
     </body>
     </html>
