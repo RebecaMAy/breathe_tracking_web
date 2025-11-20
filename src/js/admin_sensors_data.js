@@ -1,5 +1,4 @@
 // src/js/admin_sensors_data.js
-// Contiene todos los datos simulados de sensores y detalles para las vistas de administración.
 
 const adminSensorsData = [
     {
@@ -8,14 +7,14 @@ const adminSensorsData = [
         location: 'C/ Gandia, Gandia',
         lastConnection: '14:32',
         hasIncident: false,
-        coords: [38.9660, -0.1850] // Coordenadas para el mapa
+        coords: [38.9660, -0.1850]
     },
     {
         id: 'AKMSF134',
         name: 'Sensor AKMSF134',
         location: 'Av. del Cid 8, Gandia',
         lastConnection: '13:23',
-        hasIncident: true, // Este tendrá una incidencia
+        hasIncident: true,
         coords: [38.9700, -0.1800]
     },
     {
@@ -44,28 +43,25 @@ const adminSensorsData = [
     }
 ];
 
-// Datos de detalle para el sensor que se mostrará en admin_sensor_detail.html
 const sensorDetailData = {
     id: 'AKMSF134',
     name: 'Sensor AKMSF134',
-    currentLocation: 'C/ Acacias, Gandia',
+    currentLocation: 'C/ Gandia, Gandia',
     avgLocation: 'Av. del Cid 8, Gandia',
     lastConnection: '14:32',
     battery: '20%',
-    radio: 29, // km
+    radio: 29,
     point4: {
         location: 'C/ Acacias, Gandia',
         time: '13:23',
-        ozono: 0.3, // ppm
-        radiacion: 20, // MHz
-        temperatura: 24 // °C
+        ozono: 0.3,
+        // --- IMPORTANTE: AQUÍ DEBE PONER CO2 ---
+        co2: 500, 
+        temperatura: 24
     },
-    // Coordenadas para el mapa (solo usaremos la última)
     pathCoords: [
         [38.9700, -0.1800], 
         [38.9720, -0.1780],
-        [38.9740, -0.1760],
-        [38.9760, -0.1740], 
-        [38.9780, -0.1720] // Última posición
+        [38.9780, -0.1720]
     ]
 };
