@@ -1,19 +1,16 @@
-// js/auth.js
+// js/login_auth.js
 
-// 1)  AQUÍ CAMBIAR A LA URL DE LA API (Render)
+// URL de la API 
 const API_BASE = "https://api-a044.onrender.com";
 
 document.addEventListener('DOMContentLoaded', function() {
+    
     // ======================================================
-    // A) MOSTRAR / OCULTAR CONTRASEÑA (tu código original)
+    // A) MOSTRAR / OCULTAR CONTRASEÑA
     // ======================================================
-
-    // ojo: en login hay 1 contraseña, en registro también,
-    // así que lo hacemos para todas las .toggle-password que haya
     const toggles = document.querySelectorAll('.toggle-password');
 
     toggles.forEach((toggle) => {
-        // buscamos el input de password que está en el mismo "password-input-wrapper"
         const wrapper = toggle.closest('.password-input-wrapper');
         if (!wrapper) return;
 
@@ -27,11 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
 
                 if (isPassword) {
-                    // mostrar icono de "cerrar ojo"
                     eyeOpen.style.display = 'none';
                     eyeClosed.style.display = 'inline-block';
                 } else {
-                    // mostrar icono de "ojo abierto"
                     eyeOpen.style.display = 'inline-block';
                     eyeClosed.style.display = 'none';
                 }
@@ -40,100 +35,102 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ======================================================
-    // B) FUNCIÓN AUXILIAR PARA DETECTAR ROL QUE DEVUELVE LA API
-    // ======================================================
-    function detectarRol(data) {
-        // si la API devuelve el nombre directamente
-        if (data.rol_name) return data.rol_name;
-        if (data.rol) return data.rol;
-
-        // si la API devuelve el id del rol, como en tu tabla ("Id_Rol")
-        if (data.Id_Rol !== undefined && data.Id_Rol !== null) {
-            // Asjustar si se cambian los ids de rol en la base de datos
-            // Ejemplo típico:
-            if (data.Id_Rol === 1) return "Administrador";
-            if (data.Id_Rol === 2) return "Usuario";
-            // si es otro número lo tratamos como usuario normal
-            return "Usuario";
-        }
-
-        // por defecto
-        return "Usuario";
-    }
-
-    // ======================================================
-    // C) LOGIN
+    // B) LOGIN SIMULADO (ADMIN VS USUARIO)
     // ======================================================
     const loginForm = document.getElementById("loginForm");
+    
     if (loginForm) {
-        loginForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault(); // Evitar recarga de página
 
-            // tus IDs originales del login
             const email = document.getElementById("correo").value.trim();
             const password = document.getElementById("contrasena").value.trim();
+            
             const msgEl = document.getElementById("loginMsg");
             const errEl = document.getElementById("loginError");
 
-            // limpiar mensajes
+            // Limpiar mensajes previos
             if (msgEl) msgEl.textContent = "";
             if (errEl) errEl.textContent = "";
 
-            try {
-                const res = await fetch(`${API_BASE}/login`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                });
+            // --- INICIO DE LA SIMULACIÓN ---
+            // Simulamos un pequeño tiempo de carga (1 segundo) para realismo
+            // En un entorno real, esto sería el tiempo que tarda el 'fetch'
+            
+            /* NOTA: He comentado el fetch real para usar datos "dummy" (falsos)
+               según tus credenciales de prueba.
+            */
 
-                const data = await res.json();
+            setTimeout(() => {
+                
+                // CASO 1: ADMINISTRADOR
+                if (email === "admin@breathe.com" && password === "Admin1234!") {
+                    
+                    // 1. Mostrar éxito
+                    if (msgEl) {
+                        msgEl.style.color = "green";
+                        msgEl.textContent = "Acceso concedido: Administrador";
+                    }
 
-                // si la API dice que no ok
-                if (!res.ok || !data.ok) {
-                    if (errEl) errEl.textContent = data.error || "Error al iniciar sesión";
-                    return;
+                    // 2. Guardar datos falsos en localStorage (para que las otras páginas no fallen)
+                    const mockAdminData = {
+                        ok: true,
+                        user_name: "Admin Jefe",
+                        rol_name: "Administrador",
+                        Id_Rol: 1, // ID típico de admin
+                        token: "fake-token-admin-123"
+                    };
+                    localStorage.setItem("user", JSON.stringify(mockAdminData));
+
+                    // 3. Redirigir a la pantalla de ADMIN
+                    setTimeout(() => {
+                        window.location.href = "../admin_sensors.html";
+                    }, 1000); // Espera 1 seg extra para leer el mensaje
                 }
 
-                // detectamos el rol que venga de la API
-                const rol = detectarRol(data);
+                // CASO 2: USUARIO REGISTRADO
+                else if (email === "usuario@breathe.com" && password === "Usuario1234!") {
+                    
+                    // 1. Mostrar éxito
+                    if (msgEl) {
+                        msgEl.style.color = "green";
+                        msgEl.textContent = "Acceso concedido: Usuario";
+                    }
 
-                if (msgEl) {
-                    if (rol === "Administrador") {
-                        msgEl.textContent = "✅ Login como ADMIN completado";
-                    } else {
-                        msgEl.textContent = "✅ Login como usuario registrado completado";
+                    // 2. Guardar datos falsos en localStorage
+                    const mockUserData = {
+                        ok: true,
+                        user_name: "Usuario Estándar",
+                        rol_name: "Usuario",
+                        Id_Rol: 2, // ID típico de usuario
+                        token: "fake-token-user-456"
+                    };
+                    localStorage.setItem("user", JSON.stringify(mockUserData));
+
+                    // 3. Redirigir a la pantalla de USUARIO
+                    setTimeout(() => {
+                        window.location.href = "../users_map.html";
+                    }, 1000);
+                }
+
+                // CASO 3: CREDENCIALES INCORRECTAS
+                else {
+                    if (errEl) {
+                        errEl.textContent = "Correo o contraseña incorrectos.";
                     }
                 }
 
-                // guardar en localStorage por si luego quieres usarlo
-                localStorage.setItem("user", JSON.stringify(data));
-
-                // opcional: redirigir
-                // setTimeout(() => window.location.href = "../index.html", 1500);
-
-            } catch (err) {
-                console.error(err);
-                if (errEl) errEl.textContent = "No se pudo conectar con el servidor";
-            }
+            }, 500); // Tiempo de "carga" simulado del servidor
         });
     }
 
     // ===== Click en el logo → ir al landing =====
-    const headerLogo = document.querySelector('.main-header .logo, .logo img, .logo');
+    const headerLogo = document.querySelector('.main-header .logo');
     if (headerLogo) {
         headerLogo.style.cursor = 'pointer';
         headerLogo.addEventListener('click', () => {
-            // si tu landing es index.html en la raíz:
-            window.location.href = '../index.html';  // <- usa './index.html' si estás en la raíz
+            window.location.href = '../index.html'; 
         });
     }
 
-
 });
-
-
