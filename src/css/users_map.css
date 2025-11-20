@@ -1,0 +1,418 @@
+/* css/users_map.css */
+
+/* --- FIX 1: AJUSTE DE PANTALLA COMPLETA --- */
+/* Forzamos al body a ocupar exactamente el alto de la ventana y ocultamos el scroll general */
+body {
+    height: 100vh; 
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* Aseguramos que el header y el footer no se encojan */
+.main-header, .main-footer-landing {
+    flex-shrink: 0;
+    z-index: 50; /* Asegurar que queden por encima si algo se mueve */
+}
+
+/* --- Contenedor Principal (El cuerpo del mapa) --- */
+.main-container {
+    display: flex;
+    /* FIX 2: flex: 1 hace que ocupe TODO el espacio disponible entre header y footer */
+    flex: 1; 
+    width: 100%;
+    position: relative;
+    overflow: hidden; /* Evita que el mapa genere scrollbars dobles */
+    height: 100%; /* Asegura altura completa */
+}
+
+/* --- Panel Izquierdo --- */
+.left-panel {
+    width: 380px;
+    background-color: var(--left-panel-bg);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 25px;
+    box-sizing: border-box;
+    z-index: 20;
+    
+    /* FIX 3: Scroll interno solo para este panel si la lista es muy larga */
+    height: 100%; 
+    overflow-y: auto; 
+}
+
+.left-panel h3 {
+    margin-top: 0;
+    font-family: var(--font-headings);
+    color: var(--primary-dark-blue);
+    font-size: 2em;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+/* Search Bar */
+.left-panel .search-bar, 
+.map-controls-bottom .search-bar {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    flex-shrink: 0; /* Evita que se aplaste */
+}
+
+.left-panel .search-bar input,
+.map-controls-bottom .search-bar input {
+    flex-grow: 1;
+    border: none;
+    padding: 12px 15px;
+    outline: none;
+    font-family: var(--font-primary);
+    color: var(--primary-dark-text);
+}
+
+.left-panel .search-bar button,
+.map-controls-bottom .search-bar button {
+    background-color: #f4f6f8;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.3s;
+}
+.left-panel .search-bar button:hover { background-color: #e0e0e0; }
+
+/* Lista de Pines */
+.pins-container {
+    flex-grow: 1;
+    overflow-y: auto; /* Scroll independiente para la lista */
+    padding-right: 5px; /* Espacio para el scrollbar */
+}
+
+.pin-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Aseguramos que la caja se vea bien sin la flecha */
+    justify-content: flex-start; 
+}
+
+.pin-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-color: #5BA3F5;
+}
+
+.pin-item.selected {
+    border-color: #5BA3F5;
+    background-color: rgba(91, 163, 245, 0.05);
+}
+
+.pin-item .pin-icon {
+    color: #5BA3F5;
+    font-size: 1.4em;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.pin-item .pin-info {
+    /* Ocupa todo el espacio restante ahora que no hay botón */
+    flex-grow: 1; 
+}
+
+.pin-item .pin-info h4 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--primary-dark-blue);
+    font-weight: 600;
+}
+
+.pin-item .pin-info p {
+    margin: 4px 0 0;
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* --- Vista Detalles --- */
+#pin-detail-view {
+    /* Animación suave al aparecer */
+    animation: fadeIn 0.3s ease;
+}
+
+#pin-detail-view h3 {
+    color: #5BA3F5;
+    border-bottom: none;
+    margin-bottom: 10px;
+}
+
+.pin-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pin-detail-item span {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95em;
+}
+
+/* Sliders */
+.slider-group {
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+.slider-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary-dark-blue);
+    font-size: 0.9em;
+}
+
+.slider-group input[type="range"] {
+    width: calc(100% - 70px);
+    accent-color: #5BA3F5;
+}
+
+.activity-title {
+    margin-top: 25px;
+    font-family: var(--font-headings);
+    color: var(--primary-dark-blue);
+    font-size: 1.6em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.chart-placeholder {
+    width: 100%;
+    height: 100px;
+    background-color: #f8f9fa;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.detail-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.back-to-list-button {
+    background: none;
+    border: none;
+    color: #5BA3F5;
+    cursor: pointer;
+    font-size: 0.95em;
+    margin-top: 20px;
+    padding: 0;
+    font-weight: 600;
+}
+.back-to-list-button:hover { text-decoration: underline; }
+
+
+/* --- Panel Derecho (Mapa) --- */
+.map-panel {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%; /* FIX: Asegura altura completa */
+}
+
+#mapa {
+    flex-grow: 1;
+    background-color: #e6f2ff;
+    z-index: 1;
+    height: 100%; /* FIX: El mapa llena el panel */
+}
+
+/* Controles Flotantes */
+.map-controls-top, .map-controls-bottom {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+.map-controls-top { top: 20px; }
+.map-controls-bottom { 
+    bottom: 20px; 
+    left: 20px; 
+    transform: none;
+    border-radius: 12px;
+}
+
+/* Inputs y Selects */
+.map-controls-top input,
+.map-controls-top select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: var(--font-primary);
+    color: #333;
+    outline: none;
+}
+
+/* Botones Generales */
+.button-primary {
+    background-color: #5BA3F5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.button-primary:hover {
+    background-color: #4A90E2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(91, 163, 245, 0.3);
+}
+
+.button-secondary {
+    background-color: #f0f0f0;
+    color: #555;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.button-secondary:hover { background-color: #e0e0e0; }
+
+.button-danger {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.button-danger:hover { background-color: #d9363e; }
+
+/* Botón Mover Pin */
+#move-pin-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Botones Zoom */
+.zoom-controls {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.zoom-controls button {
+    background: #fff;
+    border: none;
+    padding: 5px 12px;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: #555;
+}
+.zoom-controls button:first-child { border-right: 1px solid #eee; }
+.zoom-controls button:hover { background-color: #f9f9f9; }
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(26, 46, 68, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 350px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: popIn 0.3s ease;
+}
+
+.modal-content h3 {
+    font-family: var(--font-headings);
+    color: var(--primary-dark-blue);
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: var(--font-primary);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+.modal-actions button { flex: 1; justify-content: center; }
+
+@keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+}
