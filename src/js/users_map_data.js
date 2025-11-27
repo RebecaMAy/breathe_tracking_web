@@ -1,5 +1,11 @@
 /**
- * Archivo: js/dataSimulator.js
+ * Autor: Marc Vilagrosa
+ * Descripción: Simulación de datos de sensores y cálculos matemáticos de contaminación basados en proximidad geográfica.
+ * Fecha: 2025
+ */
+
+/**
+ * Archivo: js/users_map_data.js
  * Propósito: Simular datos y calcular valores basados en proximidad (Interpolación simple).
  */
 
@@ -23,7 +29,10 @@ const simulatedCO2Data = [
 ];
 
 // --- FUNCION MATEMÁTICA PARA "SENTIR" EL MAPA ---
-// Calcula la contaminación en un punto específico basándose en la cercanía a las manchas
+
+/**
+ * cálculo: Float, Float, String -> calculatePollutionAtLocation() -> String 
+ */
 function calculatePollutionAtLocation(lat, lng, type) {
     let dataSet = (type === 'O3') ? simulatedO3Data : simulatedCO2Data;
     let totalInfluence = 0;
@@ -61,6 +70,10 @@ function calculatePollutionAtLocation(lat, lng, type) {
 
 
 // --- OBTENER DETALLES ---
+
+/**
+ * simulador: Float, Float -> getPinDetails() -> Object
+ */
 function getPinDetails(lat, lng) {
     // 1. Calculamos Ozono (0 a 1)
     const valO3 = calculatePollutionAtLocation(lat, lng, 'O3');
@@ -86,6 +99,9 @@ function getPinDetails(lat, lng) {
     };
 }
 
+/**
+ * data: String -> getContaminantData() -> Array
+ */
 function getContaminantData(type) {
     if (type === 'O3') return simulatedO3Data;
     if (type === 'CO2') return simulatedCO2Data; 

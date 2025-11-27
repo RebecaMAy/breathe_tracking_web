@@ -1,5 +1,11 @@
 /**
- * Archivo: js/main.js
+ * Autor: Marc Vilagrosa
+ * Descripción: Lógica principal del mapa, gestión de pines con Modal, interacción con capas de calor y renderizado de vistas.
+ * Fecha: 2025
+ */
+
+/**
+ * Archivo: js/users_map.js
  * Propósito: Lógica principal del mapa, gestión de pines con Modal y datos inteligentes.
  */
 
@@ -56,6 +62,9 @@ const activityTypeSpan = document.getElementById('activity-contaminant-type');
 
 // --- 1. GESTIÓN DEL MAPA DE CALOR ---
 
+/**
+ * mapa: String (Tipo) -> updateHeatmap() -> Void
+ */
 function updateHeatmap(contaminantType) {
     // Remover capa anterior
     if (activeHeatLayer) {
@@ -69,8 +78,8 @@ function updateHeatmap(contaminantType) {
     // radius: Cuanto más alto, más área cubre cada punto y más se mezclan entre sí.
     // blur: Cuanto más alto, más suave es el degradado (sin bordes duros).
     let gradientConfig;
-    let radiusValue = 80; // Antes era 25/30. ¡Ahora 80 conecta los puntos!
-    let blurValue = 60;   // Antes era 20. ¡Ahora 60 suaviza la mezcla!
+    let radiusValue = 80; // 80 conecta los puntos mejor
+    let blurValue = 60;   // 60 suaviza la mezcla
 
     if (contaminantType === 'O3') {
         // Ozono: Degradado suave de Azul (limpio) a Rojo (sucio)
@@ -131,6 +140,9 @@ addPinButton.addEventListener('click', () => {
     }
 });
 
+/**
+ * UI: Void -> resetAddPinMode() -> Void
+ */
 function resetAddPinMode() {
     isAddingPin = false;
     addPinButton.style.backgroundColor = ''; // Color original
@@ -140,6 +152,9 @@ function resetAddPinMode() {
 }
 
 // B. Click en el Mapa -> ABRE MODAL
+/**
+ * Evento: MouseEvent -> onMapClickForPin() -> Void
+ */
 function onMapClickForPin(e) {
     tempLatLng = e.latlng; // Guardar coordenadas temporalmente
     
@@ -167,6 +182,10 @@ btnCancelAdd.addEventListener('click', () => {
 
 
 // --- FUNCIÓN PRINCIPAL PARA CREAR EL OBJETO PIN ---
+
+/**
+ * lógica: Object (LatLng), String -> addCustomPin() -> Void
+ */
 function addCustomPin(latlng, customName) {
     pinIdCounter++;
     const newPinId = `pin-${pinIdCounter}`;
@@ -197,6 +216,9 @@ function addCustomPin(latlng, customName) {
 }
 
 // Renderizar la lista lateral
+/**
+ * UI: Void -> renderPinsList() -> HTML Element
+ */
 function renderPinsList() {
     pinsContainer.innerHTML = ''; 
     
@@ -222,6 +244,9 @@ function renderPinsList() {
 
 // --- 3. VISTA DE DETALLES Y DATOS INTELIGENTES ---
 
+/**
+ * lógica: String (ID) -> selectPin() -> Void
+ */
 function selectPin(pinId) {
     selectedPinId = pinId;
     const pinObj = currentPins.find(p => p.id === pinId);
@@ -266,6 +291,9 @@ function selectPin(pinId) {
 }
 
 // Volver a la lista (Llamado desde el HTML onclick)
+/**
+ * UI: Void -> showPinListView() -> Void
+ */
 function showPinListView() {
     pinListView.style.display = 'block';
     pinDetailView.style.display = 'none';
