@@ -1,5 +1,13 @@
-// users_edit.js: Módulo que maneja el modal de Edición de Perfil de forma simulada.
+/**
+ * Autor: Javier Rupérez
+ * Descripción: Módulo que maneja el modal de Edición de Perfil de forma simulada.
+ * Fecha: 2025
+ */
 
+/**
+ * Archivo: js/users_edit.js
+ * Propósito: Módulo que maneja el modal de Edición de Perfil de forma simulada.
+  */
 const modal = document.getElementById('modal-edit');
 const form = document.getElementById('editForm');
 const btnEdit = document.getElementById('btn-edit');

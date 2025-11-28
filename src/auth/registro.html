@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Breathe Tracking - Registro</title>
     
+    <!-- Estilos globales + estilos específicos de autenticación -->
     <link rel="stylesheet" href="../css/global.css?v=2">
     <link rel="stylesheet" href="../css/auth.css?v=3">
+    
+    <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
+    <!-- Lógica de registro -->
     <script src="../js/register_auth.js" defer></script>
 </head>
+
 <body class="registration-page">
     
+    <!-- Encabezado con logo y enlace a login -->
     <header class="main-header">
         <div class="logo">
             <img src="../images/logo-breathe-tracking.png" alt="Breathe Tracking Logo">
@@ -22,54 +28,68 @@
         </nav>
     </header>
 
+    <!-- Contenedor principal del registro -->
     <div class="auth-container">
         
+        <!-- Panel izquierdo con información e imagen -->
         <div class="left-panel">
             <h1>Conoce la calidad del aire en tu ciudad en tiempo real</h1>
             <img src="../images/mobile-app.png" alt="App en el teléfono" class="app-screenshot">
         </div>
 
+        <!-- Panel derecho: formulario de registro -->
         <div class="right-panel">
             <div class="login-box-wrapper">
                 <div class="login-box">
+
                     <p class="login-intro">Introduce tus credenciales para crear tu perfil</p>
                     
+                    <!-- Formulario de registro -->
                     <form id="registerForm">
+
+                        <!-- Nombre completo -->
                         <div class="input-group">
                             <label for="nombre">Nombre Completo</label>
                             <input type="text" id="nombre" placeholder="Introduce tu nombre" required>
                         </div>
+
+                        <!-- Correo -->
                         <div class="input-group">
                             <label for="correo">Correo</label>
                             <input type="email" id="correo" placeholder="Introduce tu correo" required>
                         </div>
+
+                        <!-- Código postal (opcional) -->
                         <div class="input-group">
                             <label for="codigoPostal">Código Postal</label>
                             <input type="text" id="codigoPostal" placeholder="Introduce tu código postal">
                         </div>
                         
+                        <!-- Contraseña con icono mostrar/ocultar -->
                         <div class="input-group">
                             <label for="contrasena">Contraseña</label>
                             <div class="password-input-wrapper">
                                 <input type="password" id="contrasena" placeholder="Crea una contraseña" required>
                                 <span class="toggle-password">
-                                    <i class="fas fa-eye" id="eye-open"></i> 
+                                    <i class="fas fa-eye" id="eye-open"></i>
                                     <i class="fas fa-eye-slash" id="eye-closed" style="display:none;"></i>
                                 </span>
                             </div>
                         </div>
                         
+                        <!-- Repetir contraseña -->
                         <div class="input-group">
                             <label for="repetirContrasena">Repetir Contraseña</label>
                             <div class="password-input-wrapper">
                                 <input type="password" id="repetirContrasena" placeholder="Repite la contraseña" required>
                                 <span class="toggle-password">
-                                    <i class="fas fa-eye" id="eye-open"></i> 
+                                    <i class="fas fa-eye" id="eye-open"></i>
                                     <i class="fas fa-eye-slash" id="eye-closed" style="display:none;"></i>
                                 </span>
                             </div>
                         </div>
                         
+                        <!-- Aceptación de política de privacidad -->
                         <div class="input-group privacy-policy-group">
                             <input type="checkbox" id="privacyPolicy" name="privacyPolicy" required>
                             <label for="privacyPolicy" class="privacy-label">
@@ -77,9 +97,11 @@
                             </label>
                         </div>
                         
+                        <!-- Mensajes de error / éxito -->
                         <div id="registerError" class="auth-message error"></div>
                         <div id="registerMsg" class="auth-message success"></div>
 
+                        <!-- Botón de registro -->
                         <button type="submit" class="btn-entrar">Registrarse</button>
                     </form>
                     

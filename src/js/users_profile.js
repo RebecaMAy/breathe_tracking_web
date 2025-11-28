@@ -1,3 +1,13 @@
+/**
+ * Autor: Javier Rupérez
+ * Descripción: Simulación de datos de perfil de usuario y manejo de sesión.
+ * Fecha: 2025
+ */
+
+/**
+ * Archivo: js/users_profile.js
+ * Propósito: Simular datos de perfil de usuario y manejo de sesión.
+ */
 document.addEventListener('DOMContentLoaded', function () {
   const statusEl = document.getElementById('status');
   

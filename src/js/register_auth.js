@@ -4,7 +4,7 @@
 const API_BASE = "https://api-a044.onrender.com";
 
 /**
- * 💡 Función auxiliar para validar el FORMATO del email.
+ * Función auxiliar para validar el FORMATO del email.
  * Esto no comprueba si el email existe, solo si parece un email.
  * @param {string} email - El correo a validar.
  * @returns {boolean} - true si el formato es válido.
