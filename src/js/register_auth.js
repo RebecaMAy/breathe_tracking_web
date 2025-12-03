@@ -137,13 +137,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 const nombre = nameParts[0] || '';
                 const apellidos = nameParts.slice(1).join(' ') || '';
 
-                await setDoc(doc(db, "Usuarios", userId), {
+                const userDocPayload = {
                     nombre: nombre,
                     apellidos: apellidos,
-                    email: email, 
-                    cp: codigoPostal, 
-                    Id_rol: 'usuario', 
-                });
+                    email: email,
+                    cp: codigoPostal,
+                    Id_rol: 'usuario',
+                    uid: userId,
+                    updated_at: new Date(),
+                };
+
+                await setDoc(doc(db, "Usuarios", userId), userDocPayload, { merge: true });
+                await setDoc(doc(db, "Usuarios", email.toLowerCase()), userDocPayload, { merge: true });
 
                 // 8. ÉXITO
                 if (msgEl) msgEl.textContent = "¡Registro completado! Has iniciado sesión.";

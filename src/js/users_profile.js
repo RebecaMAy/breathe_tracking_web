@@ -2,13 +2,11 @@
  * Archivo: js/users_profile.js
  * Propósito: Gestionar la sesión (Auth) y cargar/guardar los datos de perfil (Firestore).
  */
-// **********************************************
-// 🚨 LINEAS DE FIREBASE ELIMINADAS: initializeApp, getAuth, etc.,
-// se accede a ellas globalmente via window (después de la carga en linea en HTML)
-// **********************************************
 
-// Módulo local que SÍ necesita import:
-import { openModal, closeModal } from "./users_edit.js"; 
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { openModal, closeModal, validate, clearFieldErrors } from "./users_edit.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
@@ -20,18 +18,22 @@ const firebaseConfig = {
     appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
 };
 
-// Inicializar Firebase (acceso directo a las funciones globales)
-const app = initializeApp(firebaseConfig);
+// Inicializa Firebase o reutiliza la instancia existente para evitar errores.
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Referencia global al UID del usuario actual
 let currentUserId = null;
+let currentProfileDocId = null;
 
 
 document.addEventListener('DOMContentLoaded', function () {
     const statusEl = document.getElementById('status');
     const editForm = document.getElementById('editForm'); // Referencia al formulario del modal
+    const modalBackdrop = document.getElementById('modal-edit');
+    const btnEdit = document.getElementById('btn-edit');
+    const btnCancel = document.getElementById('edit-cancel');
 
     // 2. Referencias a los elementos del DOM (Vista del perfil)
     const pNombre = document.getElementById('p-nombre');
@@ -45,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const editApellidos = document.getElementById('edit-apellidos');
     const editCp = document.getElementById('edit-cp'); 
     const editTelefono = document.getElementById('edit-telefono');
-    const editEmail = document.getElementById('edit-email');
 
     // Botón de iniciar sesión para ocultarlo
     const loginLink = document.querySelector('.header-nav a[href="login.html"]');
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pApellidos.textContent = user.apellidos || '—'; 
         pCp.textContent = user.cp || '—'; 
         pTelefono.textContent = user.telefono || '—'; 
-        pEmail.textContent = user.email || '—'; 
+        pEmail.textContent = user.email || auth.currentUser?.email || '—'; 
         document.getElementById('p-password').textContent = '••••••••';
     }
     
@@ -96,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
         editApellidos.value = userData.apellidos || '';
         editCp.value = userData.cp || ''; 
         editTelefono.value = userData.telefono || ''; 
-        editEmail.value = userData.email || ''; 
     }
 
 
@@ -105,26 +105,37 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {string} userId - El UID del usuario logueado.
      */
     async function loadUserProfileFromFirestore(userId) {
-        currentUserId = userId; // Guarda el UID globalmente
-        
-        // Uso de 'doc' y 'getDoc' (disponibles globalmente)
-        const docRef = doc(db, "usuarios", userId);
-        
+        currentUserId = userId;
+        const emailKey = auth.currentUser?.email ? auth.currentUser.email.toLowerCase() : null;
+
+        const tryLoad = async (docId) => {
+            if (!docId) return null;
+            const ref = doc(db, "Usuarios", docId);
+            const snap = await getDoc(ref);
+            if (!snap.exists()) return null;
+            return { docId, data: snap.data() };
+        };
+
         try {
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                userData.email = auth.currentUser.email; 
-
-                fillEditModal(userData); // Rellena el modal
-                
-                return userData; // Retorna los datos para renderProfile
-            } else {
-                console.warn("Documento de perfil no encontrado para el UID:", userId);
-                showStatus('Perfil incompleto. Por favor, completa tus datos.', 'warning');
-                return { email: auth.currentUser.email }; // Devuelve solo el email si no hay doc
+            let result = await tryLoad(userId);
+            if (!result && emailKey) {
+                result = await tryLoad(emailKey);
             }
+
+            if (result) {
+                currentProfileDocId = result.docId;
+                const userData = {
+                    ...result.data,
+                    email: auth.currentUser?.email || result.data.email,
+                };
+                fillEditModal(userData);
+                return userData;
+            }
+
+            currentProfileDocId = null;
+            console.warn("Documento de perfil no encontrado para:", userId, emailKey);
+            showStatus('Perfil incompleto. Por favor, completa tus datos.', 'warning');
+            return { email: auth.currentUser?.email };
         } catch (error) {
             console.error("Error al obtener el perfil de Firestore:", error);
             showStatus('Error al cargar el perfil. Por favor, revisa tus Reglas de Seguridad.', 'error');
@@ -132,6 +143,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+    btnEdit?.addEventListener('click', () => {
+        clearFieldErrors();
+        openModal();
+    });
+
+    btnCancel?.addEventListener('click', () => closeModal());
+
+    modalBackdrop?.addEventListener('click', (event) => {
+        if (event.target === modalBackdrop) {
+            closeModal();
+        }
+    });
 
     /** Maneja el envío y actualización del formulario de edición. */
     editForm?.addEventListener('submit', async (e) => {
@@ -143,24 +167,39 @@ document.addEventListener('DOMContentLoaded', function () {
             cp: editCp.value.trim(), 
             telefono: editTelefono.value.trim(),
         };
+        const validationValues = { ...payload };
+        clearFieldErrors();
+        if (!validate(validationValues)) {
+            showStatus('Corrige los campos marcados antes de guardar.', 'warning');
+            return;
+        }
         
         if (!currentUserId) {
             showStatus('Error: Usuario no autenticado para actualizar.', 'error');
             return;
         }
 
-        // Uso de 'doc' y 'updateDoc' (disponibles globalmente)
-        const docRef = doc(db, "usuarios", currentUserId);
+        const primaryDocId = currentProfileDocId || currentUserId;
+        const emailDocId = auth.currentUser?.email ? auth.currentUser.email.toLowerCase() : null;
+        const docRef = doc(db, "Usuarios", primaryDocId);
         try {
             showStatus('Guardando cambios...', 'info');
             
-            await updateDoc(docRef, {
+            const docPayload = {
                 nombre: payload.nombre,
                 apellidos: payload.apellidos,
                 cp: payload.cp, 
                 telefono: payload.telefono,
+                email: auth.currentUser?.email || undefined,
+                uid: currentUserId,
                 updated_at: new Date(),
-            });
+            };
+
+            await setDoc(docRef, docPayload, { merge: true });
+
+            if (emailDocId && emailDocId !== primaryDocId) {
+                await setDoc(doc(db, "Usuarios", emailDocId), docPayload, { merge: true });
+            }
             
             const updatedData = await loadUserProfileFromFirestore(currentUserId);
             renderProfile(updatedData);
@@ -206,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.location.href = 'login.html'; 
                 }
             }, 1500); 
-        }
-    });
+        }
+    });
 
 });
