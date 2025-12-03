@@ -11,24 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" type="image/png" href="../images/logo-breathe-tracking.png"/>
     
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-
-    <script type="module">
-        // 1. Importaciones con ruta completa de la CDN (ÚNICA forma que el navegador acepta)
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        
-        // 2. Exposición de funciones al ámbito global (window)
-        // Esto soluciona que tu script local no pueda importarlas.
-        window.initializeApp = initializeApp;
-        window.getAuth = getAuth;
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.getFirestore = getFirestore;
-        window.doc = doc;
-        window.setDoc = setDoc;
-    </script>
-    
     <script type="module" src="../js/register_auth.js"></script> 
 </head>
 <body class="registration-page">
