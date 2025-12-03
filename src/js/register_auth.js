@@ -1,16 +1,38 @@
-// js/register_auth.js
+/**
+ * Archivo: js/register_auth.js
+ * Propósito: Registrar un nuevo usuario en Firebase Authentication y guardar sus datos en Firestore.
+ */
 
-// 1)  URL DE LA API
-const API_BASE = "https://api-a044.onrender.com";
+// Importamos directamente desde la CDN oficial de Firebase para evitar dependencias globales.
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// **********************************************
+// ⚠ REEMPLAZA ESTO CON LA CONFIGURACIÓN REAL DE TU PROYECTO
+// **********************************************
+const firebaseConfig = {
+    apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
+    authDomain: "biometria-g3.firebaseapp.com",
+    databaseURL: "https://biometria-g3-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "biometria-g3",
+    storageBucket: "biometria-g3.firebasestorage.app",
+    messagingSenderId: "817957103566",
+    appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
+};
+
+// Reutilizamos la app si ya existe (evita el error de "Firebase App named '[DEFAULT]' already exists").
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app); // Referencia a Authentication
+const db = getFirestore(app); // Referencia a Firestore
+// **********************************************
+// **********************************************
+
 
 /**
  * Función auxiliar para validar el FORMATO del email.
- * Esto no comprueba si el email existe, solo si parece un email.
- * @param {string} email - El correo a validar.
- * @returns {boolean} - true si el formato es válido.
  */
 function esEmailValido(email) {
-    // Expresión regular simple para validar el formato de email
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
 }
@@ -24,8 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const wrapper = toggle.closest('.password-input-wrapper');
         if (!wrapper) return;
         const passwordInput = wrapper.querySelector('input[type="password"], input[type="text"]');
-        const eyeOpen = toggle.querySelector('#eye-open');
-        const eyeClosed = toggle.querySelector('#eye-closed');
+        
+        const eyeOpen = toggle.querySelector('.fas.fa-eye'); 
+        const eyeClosed = toggle.querySelector('.fas.fa-eye-slash');
 
         if (passwordInput && eyeOpen && eyeClosed) {
             toggle.addEventListener('click', function() {
@@ -43,28 +66,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ======================================================
-    // D) REGISTRO (CON VALIDACIONES DE SEGURIDAD)
+    // D) REGISTRO (INTEGRACIÓN CON FIREBASE)
     // ======================================================
     const registerForm = document.getElementById("registerForm");
 
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
-            // Prevenimos el envío automático del formulario
             e.preventDefault();
 
             // 1. OBTENER ELEMENTOS
-            const nombre = document.getElementById("nombre").value.trim();
+            const nombreCompleto = document.getElementById("nombre").value.trim();
             const email = document.getElementById("correo").value.trim();
             const password = document.getElementById("contrasena").value.trim();
             const repetir = document.getElementById("repetirContrasena").value.trim();
             const codigoPostalInput = document.getElementById("codigoPostal");
             const codigoPostal = codigoPostalInput ? codigoPostalInput.value.trim() : "";
             
-            // Casilla de política de privacidad
-            // Asegúrate de tener en tu HTML un input así: <input type="checkbox" id="privacyPolicy">
             const privacyPolicy = document.getElementById("privacyPolicy");
 
-            // Elementos para mostrar mensajes al usuario
             const msgEl = document.getElementById("registerMsg");
             const errEl = document.getElementById("registerError");
 
@@ -72,36 +91,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (msgEl) msgEl.textContent = "";
             if (errEl) errEl.textContent = "";
 
-            // --- INICIO DE VALIDACIONES (FRONT-END) ---
-
-            // 2. VALIDACIÓN: Ley de protección de datos
-            // Comprobamos que la casilla de privacidad esté marcada.
+            // --- INICIO DE VALIDACIONES ---
+            
             if (!privacyPolicy || !privacyPolicy.checked) {
                 if (errEl) errEl.textContent = "Debes aceptar la política de privacidad para registrarte.";
-                return; // Detenemos la ejecución
+                return;
             }
 
-            // 3. VALIDACIÓN: Formato de correo electrónico
-            // Usamos la función auxiliar de arriba
             if (!esEmailValido(email)) {
                 if (errEl) errEl.textContent = "El formato del correo electrónico no es válido.";
-                return; // Detenemos la ejecución
+                return;
             }
 
-            // 4. VALIDACIÓN: Doble verificación de contraseña
-            // Esto ya lo tenías. Comprueba que ambas contraseñas coinciden.
             if (password !== repetir) {
                 if (errEl) errEl.textContent = "Las contraseñas no coinciden.";
-                return; // Detenemos la ejecución
+                return;
             }
 
-            // 5. VALIDACIÓN: Contraseña segura
-            // Comprobamos las reglas de la imagen: número, mayúscula, carácter especial.
-            // Añadimos también una longitud mínima (8 caracteres) como buena práctica.
             const tieneNumero = /\d/.test(password);
             const tieneMayuscula = /[A-Z]/.test(password);
-            const tieneEspecial = /[\W_]/.test(password); // \W es "no-palabra" (especial), _ se añade por si acaso.
-            const tieneLongitud = password.length >= 8;
+            const tieneEspecial = /[\W_]/.test(password);
+            const tieneLongitud = password.length >= 8; 
 
             if (!tieneNumero || !tieneMayuscula || !tieneEspecial || !tieneLongitud) {
                 let errorMsg = "La contraseña no es segura. Debe contener al menos: ";
@@ -110,60 +120,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!tieneMayuscula) errorMsg += "una mayúscula, ";
                 if (!tieneEspecial) errorMsg += "un carácter especial, ";
                 
-                // Quitamos la última coma y espacio
                 if (errEl) errEl.textContent = errorMsg.slice(0, -2) + ".";
-                return; // Detenemos la ejecución
+                return;
             }
+            
+            // --- FIN DE VALIDACIONES ---
 
-            // --- FIN DE VALIDACIONES (FRONT-END) ---
-
-            // Si todas las validaciones del front-end pasan, intentamos enviar al back-end.
             try {
-                // 6. PUNTO CLAVE: Contraseña Codificada (TAREA DEL BACK-END)
-                // Enviamos la contraseña en "texto plano" (tal cual la escribió el usuario).
-                // La conexión HTTPS (la 's' de https://) la encripta DURANTE EL VIAJE.
-                // El SERVIDOR (back-end) es quien DEBE recibirla y "codificarla" (hashearla)
-                // usando un algoritmo seguro (como bcrypt) ANTES de guardarla en la BD.
-                //
-                // ¡NUNCA HAGAS HASH DE LA CONTRASEÑA EN EL FRONT-END!
+                // 6. PASO 1: Creación del usuario en Firebase Authentication (Acceso directo a la función)
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                const userId = user.uid;
 
-                const res = await fetch(`${API_BASE}/register`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        nombre: nombre,
-                        email: email,
-                        password: password, // Se envía en plano, el back-end la hashea
-                        codigo_postal: codigoPostal
-                    })
+                // 7. PASO 2: Guardar datos adicionales en Firestore (Acceso directo a las funciones)
+                const nameParts = nombreCompleto.split(' ');
+                const nombre = nameParts[0] || '';
+                const apellidos = nameParts.slice(1).join(' ') || '';
+
+                await setDoc(doc(db, "Usuarios", userId), {
+                    nombre: nombre,
+                    apellidos: apellidos,
+                    email: email, 
+                    cp: codigoPostal, 
+                    Id_rol: 'usuario', 
                 });
 
-                const data = await res.json();
+                // 8. ÉXITO
+                if (msgEl) msgEl.textContent = "¡Registro completado! Has iniciado sesión.";
+                
+                // Redirigir al mapa/perfil
+                setTimeout(() => window.location.href = "../users_map.html", 1500);
 
-                // Si la API nos devuelve un error (ej. email ya existe)
-                if (!res.ok || !data.ok) {
-                    if (errEl) errEl.textContent = data.error || "No se pudo registrar. Inténtalo de nuevo.";
-                    return;
+            } catch (error) {
+                console.error("Error de Firebase:", error.code, error.message);
+                
+                let errorMessage;
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = "El correo ya está registrado. Intenta iniciar sesión.";
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = "El formato de correo es inválido.";
+                        break;
+                    default:
+                        errorMessage = "Error desconocido al registrar: " + (error.message || error.code);
+                        break;
                 }
-
-                // 7.  VALIDACIÓN: Verificación de correo electrónico (TAREA DEL BACK-END)
-                // El back-end debería haber enviado un email de verificación.
-                // Por lo tanto, actualizamos el mensaje de éxito para reflejar esto.
-                if (msgEl) msgEl.textContent = "¡Registro completado! Revisa tu correo para verificar tu cuenta.";
-
-                // Opcional: Redirigir al login después de unos segundos
-                // setTimeout(() => window.location.href = "./login.html", 3000);
-
-            } catch (err) {
-                // Error de red (ej. no se puede conectar con la API)
-                console.error(err);
-                if (errEl) errEl.textContent = "No se pudo conectar con el servidor. Revisa tu conexión.";
+                
+                if (errEl) errEl.textContent = errorMessage;
             }
         });
     }
 
     // ===== Click en el logo → ir al landing (Lógica compartida) =====
-    // (Esta parte no se modifica, sigue igual)
     const headerLogo = document.querySelector('.main-header .logo, .logo img, .logo');
     if (headerLogo) {
         headerLogo.style.cursor = 'pointer';

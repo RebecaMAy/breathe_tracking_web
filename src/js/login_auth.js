@@ -1,7 +1,44 @@
-// js/login_auth.js
+/**
+ * Archivo: js/login_auth.js
+ * Propósito: Autenticar al usuario con Firebase y redirigir.
+ */
 
-// URL de la API 
-const API_BASE = "https://api-a044.onrender.com";
+// 1. Importaciones de Firebase SDK
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// **********************************************
+const firebaseConfig = {
+  apiKey: "AIzaSyCbAVEYYdtSLmrH_opCM72G_G01QXPRZ48",
+  authDomain: "biometria-g3.firebaseapp.com",
+  databaseURL: "https://biometria-g3-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "biometria-g3",
+  storageBucket: "biometria-g3.firebasestorage.app",
+  messagingSenderId: "817957103566",
+  appId: "1:817957103566:web:75c78a0a28f3380d092d9f"
+};
+// Inicializar Firebase
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app); // Referencia a Authentication
+const db = getFirestore(app); // Referencia a Firestore
+// **********************************************
+// **********************************************
+
+// Función auxiliar para obtener datos del perfil (incluyendo el rol)
+async function fetchUserProfile(userId) {
+    const docRef = doc(db, "Usuarios", userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        const userData = docSnap.data();
+        // 🚨 CAMBIO: Mapeamos Id_rol a la variable 'rol' para la lógica de redirección
+        return {
+            ...userData,
+            rol: userData.Id_rol || 'usuario' 
+        };
+    }
+    return { rol: 'usuario' }; 
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -15,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!wrapper) return;
 
         const passwordInput = wrapper.querySelector('input[type="password"], input[type="text"]');
-        const eyeOpen = toggle.querySelector('#eye-open');
-        const eyeClosed = toggle.querySelector('#eye-closed');
+        const eyeOpen = toggle.querySelector('.fas.fa-eye');
+        const eyeClosed = toggle.querySelector('.fas.fa-eye-slash');
 
         if (passwordInput && eyeOpen && eyeClosed) {
             toggle.addEventListener('click', function() {
@@ -35,13 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ======================================================
-    // B) LOGIN SIMULADO (ADMIN VS USUARIO)
+    // B) LOGIN CON FIREBASE AUTH
     // ======================================================
     const loginForm = document.getElementById("loginForm");
     
     if (loginForm) {
-        loginForm.addEventListener("submit", (e) => {
-            e.preventDefault(); // Evitar recarga de página
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault(); 
 
             const email = document.getElementById("correo").value.trim();
             const password = document.getElementById("contrasena").value.trim();
@@ -52,75 +89,53 @@ document.addEventListener('DOMContentLoaded', function() {
             // Limpiar mensajes previos
             if (msgEl) msgEl.textContent = "";
             if (errEl) errEl.textContent = "";
-
-            // --- INICIO DE LA SIMULACIÓN ---
-            // Simulamos un pequeño tiempo de carga (1 segundo) para realismo
-            // En un entorno real, esto sería el tiempo que tarda el 'fetch'
             
-            /* NOTA: He comentado el fetch real para usar datos "dummy" (falsos)
-               según tus credenciales de prueba.
-            */
-
-            setTimeout(() => {
+            try {
+                // 1. Iniciar sesión en Firebase Authentication
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
                 
-                // CASO 1: ADMINISTRADOR
-                if (email === "admin@breathe.com" && password === "Admin1234!") {
-                    
-                    // 1. Mostrar éxito
-                    if (msgEl) {
-                        msgEl.style.color = "green";
-                        msgEl.textContent = "Acceso concedido: Administrador";
-                    }
+                // 2. Obtener datos de Firestore para verificar el rol (Id_rol)
+                const profile = await fetchUserProfile(user.uid);
+                const userRole = profile.rol || 'usuario'; 
 
-                    // 2. Guardar datos falsos en localStorage (para que las otras páginas no fallen)
-                    const mockAdminData = {
-                        ok: true,
-                        user_name: "Admin Jefe",
-                        rol_name: "Administrador",
-                        Id_Rol: 1, // ID típico de admin
-                        token: "fake-token-admin-123"
-                    };
-                    localStorage.setItem("user", JSON.stringify(mockAdminData));
+                // 3. Mostrar éxito
+                if (msgEl) {
+                    msgEl.style.color = "green";
+                    msgEl.textContent = `Acceso concedido: ${userRole.toUpperCase()}`;
+                }
 
-                    // 3. Redirigir a la pantalla de ADMIN
-                    setTimeout(() => {
+                // 4. Redirigir según el rol
+                setTimeout(() => {
+                    // Nota: Asume que el rol 'administrador' o 'admin' redirige a admin_sensors
+                    if (userRole === 'administrador' || userRole === 'admin') {
                         window.location.href = "../admin_sensors.html";
-                    }, 1000); // Espera 1 seg extra para leer el mensaje
-                }
-
-                // CASO 2: USUARIO REGISTRADO
-                else if (email === "usuario@breathe.com" && password === "Usuario1234!") {
-                    
-                    // 1. Mostrar éxito
-                    if (msgEl) {
-                        msgEl.style.color = "green";
-                        msgEl.textContent = "Acceso concedido: Usuario";
-                    }
-
-                    // 2. Guardar datos falsos en localStorage
-                    const mockUserData = {
-                        ok: true,
-                        user_name: "Usuario Estándar",
-                        rol_name: "Usuario",
-                        Id_Rol: 2, // ID típico de usuario
-                        token: "fake-token-user-456"
-                    };
-                    localStorage.setItem("user", JSON.stringify(mockUserData));
-
-                    // 3. Redirigir a la pantalla de USUARIO
-                    setTimeout(() => {
+                    } else {
+                        // Rol por defecto o 'usuario' redirige al mapa
                         window.location.href = "../users_map.html";
-                    }, 1000);
-                }
-
-                // CASO 3: CREDENCIALES INCORRECTAS
-                else {
-                    if (errEl) {
-                        errEl.textContent = "Correo o contraseña incorrectos.";
                     }
-                }
+                }, 1000); 
 
-            }, 500); // Tiempo de "carga" simulado del servidor
+            } catch (error) {
+                console.error("Error de Firebase:", error.code, error.message);
+                
+                let errorMessage;
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        errorMessage = "Correo o contraseña incorrectos.";
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = "Acceso bloqueado temporalmente por demasiados intentos.";
+                        break;
+                    default:
+                        errorMessage = "Error de inicio de sesión. Inténtalo de nuevo.";
+                        break;
+                }
+                
+                if (errEl) errEl.textContent = errorMessage;
+            }
         });
     }
 

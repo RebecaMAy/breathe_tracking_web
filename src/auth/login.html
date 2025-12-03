@@ -8,8 +8,14 @@
     
     <link rel="stylesheet" href="../css/global.css?v=2">
     <link rel="stylesheet" href="../css/auth.css?v=2">
-     <!-- js donde hacemos el fetch a la API -->
-    <script src="../js/login_auth.js" defer></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+    
+    <script type="module" src="../js/login_auth.js"></script>
 </head>
 <body>
 
@@ -35,7 +41,6 @@
                 <div class="login-box">
                     <p class="login-intro">Introduce tus credenciales para acceder a tu perfil</p>
 
-                    <!-- le ponemos id para poder capturarlo en JS -->
                     <form id="loginForm">
                         <div class="input-group">
                             <label for="correo">Correo</label>
@@ -54,9 +59,7 @@
                         <p class="register-text">¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
                         <button type="submit" class="btn-entrar">Entrar</button>
 
-                        <!-- mensaje de éxito -->
                         <p id="loginMsg" class="info" style="margin-top:10px;"></p>
-                        <!-- mensaje de error -->
                         <p id="loginError" class="error" style="margin-top:4px;color:#e74c3c;"></p>
                     </form>
                 </div>
@@ -65,6 +68,6 @@
 
     </div>
 
-   
+    
 </body>
 </html>
