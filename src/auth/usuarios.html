@@ -1,153 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi perfil - Breathe Tracking</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi perfil - Breathe Tracking</title>
 
-  <!-- Estilos globales y específicos de usuarios -->
-  <link rel="stylesheet" href="../css/global.css?v=4" />
-  <link rel="stylesheet" href="../css/users.css?v=1" />
+    <link rel="stylesheet" href="../css/global.css?v=4" />
+    <link rel="stylesheet" href="../css/users.css?v=1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
 <header class="main-header">
-  <div class="header-left">
-
-    <!-- Logo que lleva a la página principal -->
-    <a href="../index.html" class="logo">
-      <img src="../images/logo-breathe-tracking.png" alt="Breathe Tracking Logo" />
-    </a>
-
-    <!-- Botón para volver al mapa de usuarios -->
-    <a href="../users_map.html" class="nav-button nav-button-ghost">Volver al mapa</a>
-  </div>
-
-  <nav class="header-nav">
-    <!-- Botón de inicio de sesión (cuando no hay usuario logueado) -->
-    <a href="login.html" class="nav-button nav-button-ghost">Iniciar Sesión</a>
-  </nav>
+    <div class="header-left">
+        <a href="../index.html" class="logo">
+            <img src="../images/logo-breathe-tracking.png" alt="Breathe Tracking Logo" />
+        </a>
+        <a href="../users_map.html" class="nav-button nav-button-ghost">Volver al mapa</a>
+    </div>
+    <nav class="header-nav">
+        <a href="login.html" class="nav-button nav-button-ghost">Iniciar Sesión</a>
+    </nav>
 </header>
 
-<!-- Barra para mostrar mensajes de estado -->
 <div id="status" class="status-bar"></div>
 
 <main class="users-page">
-  <div class="users-container">
-    <div class="users-header">
-      <div>
-        <!-- Título principal -->
-        <h1 class="users-title">Mi perfil</h1>
-      </div>
+    <div class="users-container">
+        <div class="users-header">
+            <div>
+                <h1 class="users-title">Mi perfil</h1>
+            </div>
+        </div>
+
+        <div class="profile-wrap">
+            <div class="card profile-card">
+                <div class="avatar-wrap">
+                    <div class="avatar">
+                        <img src="../images/avatar-user.svg" alt="Avatar" />
+                    </div>
+                </div>
+
+                <div class="profile-grid" id="profile">
+                    <div class="profile-label">Nombre:</div>
+                    <div class="profile-value" id="p-nombre">Cargando...</div>
+
+                    <div class="profile-label">Apellidos:</div>
+                    <div class="profile-value" id="p-apellidos">Cargando...</div>
+                    
+                    <div class="profile-label">Cód. Postal:</div>
+                    <div class="profile-value" id="p-cp">Cargando...</div>
+
+                    <div class="profile-label">Teléfono:</div>
+                    <div class="profile-value" id="p-telefono">Cargando...</div>
+
+                    <div class="profile-label">Email:</div>
+                    <div class="profile-value" id="p-email">Cargando...</div>
+
+                    <div class="profile-label">Contraseña:</div>
+                    <div class="profile-value" id="p-password">••••••••</div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn-edit" id="btn-edit" type="button">
+                        <img src="../images/edit.svg" alt="Editar" class="btn-icon"/> Editar
+                    </button>
+                    <button class="btn-logout" id="btn-logout" type="button">
+                        <img src="../images/power.svg" alt="Cerrar sesión" class="btn-icon invert"/> Cerrar Sesión
+                    </button>
+                </div>
+
+            </div>
+        </div>
     </div>
-
-    <div class="profile-wrap">
-      <div class="card profile-card">
-
-        <!-- Imagen/avatar del usuario -->
-        <div class="avatar-wrap">
-          <div class="avatar">
-            <img src="../images/avatar-user.svg" alt="Avatar" />
-          </div>
-        </div>
-
-        <!-- Grid con los datos del perfil -->
-        <div class="profile-grid" id="profile">
-
-          <div class="profile-label">Nombre:</div>
-          <div class="profile-value" id="p-nombre">Nombre</div>
-
-          <div class="profile-label">Apellidos:</div>
-          <div class="profile-value" id="p-apellidos">Apellidos</div>
-
-          <div class="profile-label">Teléfono:</div>
-          <div class="profile-value" id="p-telefono">111-111-111</div>
-
-          <div class="profile-label">Email:</div>
-          <div class="profile-value" id="p-email">usuario@gmail.com</div>
-
-          <div class="profile-label">Contraseña:</div>
-          <!-- Contraseña mostrada como oculto -->
-          <div class="profile-value" id="p-password">••••••••</div>
-        </div>
-
-        <!-- Botones de acción -->
-        <div class="profile-actions">
-          <!-- Abre el modal de edición -->
-          <button class="btn-edit" id="btn-edit" type="button">
-            <img src="../images/edit.svg" alt="Editar" class="btn-icon"/> Editar
-          </button>
-
-          <!-- Cierra sesión -->
-          <button class="btn-logout" id="btn-logout" type="button">
-            <img src="../images/power.svg" alt="Cerrar sesión" class="btn-icon invert"/> Cerrar Sesión
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
 </main>
 
-<!-- Pie de página -->
 <footer class="site-footer">
-  <div class="footer-inner">
-    <span>Copyright</span>
-    <span class="footer-sep"> | </span>
-    <span>FAQ</span>
-    <span class="footer-sep"> | </span>
-    <span>Enlaces a redes</span>
-  </div>
+    <div class="footer-inner">
+        <span>Copyright</span>
+        <span class="footer-sep"> | </span>
+        <span>FAQ</span>
+        <span class="footer-sep"> | </span>
+        <span>Enlaces a redes</span>
+    </div>
 </footer>
 
-<!-- Modal para editar el perfil -->
 <div id="modal-edit" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal" role="document">
-    <h2>Editar Perfil</h2>
+    <div class="modal" role="document">
+        <h2>Editar Perfil</h2>
+        <form id="editForm">
+            <div class="form-row">
+                <label for="edit-nombre">Nombre</label>
+                <input id="edit-nombre" name="nombre" type="text" placeholder="Nombre" />
+                <div class="field-error" data-for="nombre"></div>
+            </div>
 
-    <!-- Formulario del modal -->
-    <form id="editForm">
+            <div class="form-row">
+                <label for="edit-apellidos">Apellidos</label>
+                <input id="edit-apellidos" name="apellidos" type="text" placeholder="Apellidos" />
+                <div class="field-error" data-for="apellidos"></div>
+            </div>
+            
+            <div class="form-row">
+                <label for="edit-cp">Código Postal</label>
+                <input id="edit-cp" name="cp" type="text" placeholder="12345" />
+                <div class="field-error" data-for="cp"></div>
+            </div>
 
-      <!-- Campo Nombre -->
-      <div class="form-row">
-        <label for="edit-nombre">Nombre</label>
-        <input id="edit-nombre" name="nombre" type="text" placeholder="Nombre" />
-        <div class="field-error" data-for="nombre"></div>
-      </div>
-
-      <!-- Campo Apellidos -->
-      <div class="form-row">
-        <label for="edit-apellidos">Apellidos</label>
-        <input id="edit-apellidos" name="apellidos" type="text" placeholder="Apellidos" />
-        <div class="field-error" data-for="apellidos"></div>
-      </div>
-
-      <!-- Campo Teléfono -->
-      <div class="form-row">
-        <label for="edit-telefono">Teléfono</label>
-        <input id="edit-telefono" name="telefono" type="tel" placeholder="111-111-111" />
-        <div class="field-error" data-for="telefono"></div>
-      </div>
-
-      <!-- Campo Email -->
-      <div class="form-row">
-        <label for="edit-email">Email</label>
-        <input id="edit-email" name="email" type="email" placeholder="usuario@gmail.com" />
-        <div class="field-error" data-for="email"></div>
-      </div>
-
-      <!-- Botones del modal -->
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" id="edit-cancel">Cancelar</button>
-        <button type="submit" class="btn-save" id="edit-save">Guardar cambios</button>
-      </div>
-    </form>
-  </div>
+            <div class="form-row">
+                <label for="edit-telefono">Teléfono</label>
+                <input id="edit-telefono" name="telefono" type="tel" placeholder="111-111-111" />
+                <div class="field-error" data-for="telefono"></div>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" id="edit-cancel">Cancelar</button>
+                <button type="submit" class="btn-save" id="edit-save">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<!-- Scripts para manejar carga del perfil y edición -->
-<script src="../js/users_profile.js?v=1"></script>
-<script type="module" src="../js/users_edit.js?v=1"></script>
+<script type="module" src="../js/users_profile.js?v=2"></script>
 
 </body>
 </html>
